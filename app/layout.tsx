@@ -72,15 +72,15 @@ const renderLogo = () => (
       <div className="css-1h3rtzg css-f7ay7b css-ln7vnr css-zjik7">
         <div
           className="css-1l1io5o"
-          style="width: 30px; height: 30px; border-width: 3px;"
+          style={{ width: '30px', height: '30px', borderWidth: '3px' }}
         ></div>
       </div>
       <div
         className="css-joi6zj"
-        style="background: rgb(40, 62, 86); box-shadow: none;"
+        style={{ background: 'rgb(40, 62, 86)', boxShadow: 'none' }}
       ></div>
       <div className="css-1vs2kf0">
-        <div style="transform: scale(1);">
+        <div>
           <svg
             width="339.46009583965366"
             height="347.41875"
@@ -90,7 +90,6 @@ const renderLogo = () => (
             <defs id="SvgjsDefs3329"></defs>
             <g
               id="SvgjsG3330"
-              featurekey="rootContainer"
               transform="matrix(3.021815129688323,0,0,3.021815129688323,-0.3742275421386347,0.11851630326547433)"
               fill="#ffffff"
             >
@@ -101,7 +100,6 @@ const renderLogo = () => (
             </g>
             <g
               id="SvgjsG3331"
-              featurekey="symbolFeature-0"
               transform="matrix(1.7547439079573417,0,0,1.7547439079573417,68.59502810064288,49.42942240393704)"
               fill="#283e56"
             >
@@ -116,7 +114,6 @@ const renderLogo = () => (
             </g>
             <g
               id="SvgjsG3332"
-              featurekey="nameFeature-0"
               transform="matrix(0.8341501074348834,0,0,0.8341501074348834,55.332679655512145,222.38862884985076)"
               fill="#283e56"
             >
@@ -133,6 +130,13 @@ async function getData() {
   const notionService = new NotionService();
   return await notionService.getInfo();
 }
+interface Concert {
+  name: string;
+  date: string;
+  time: string;
+  price: string;
+  direction: string;
+}
 
 export default async function RootLayout({
   children,
@@ -140,10 +144,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const data = await getData();
-  const concerts = data?.map((d) => {
+  // @ts-ignore TODO fix this
+  const concerts: Concert[] = data?.map((d) => {
     return Object.entries(d).reduce((acc, [key, value]) => {
+      // @ts-ignore
       const valueText = value.rich_text?.[0]?.plain_text;
       if (valueText) {
+        // @ts-ignore
         acc[key] = valueText;
       }
       return acc;

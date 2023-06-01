@@ -17,10 +17,9 @@ function Links() {
 
   const renderInstagramSVG = () => (
     <svg
-      className="h-10 w-10"
       xmlns="http://www.w3.org/2000/svg"
-      width="102"
-      height="102"
+      width="40"
+      height="40"
       viewBox="0 0 102 102"
     >
       <defs>
@@ -66,14 +65,14 @@ function Links() {
 
   return (
     <div className="flex">
-      <a href="https://www.facebook.com/bluescavaliers" title="Facebook link">
+      <a
+        href="https://www.facebook.com/bluescavaliers"
+        title="Facebook link"
+        className="mr-4"
+      >
         {renderFacebookSVG()}
       </a>
-      <a
-        className="ml-2"
-        href="https://www.instagram.com/cavaliersblues"
-        title="Instagram link"
-      >
+      <a href="https://www.instagram.com/cavaliersblues" title="Instagram link">
         {renderInstagramSVG()}
       </a>
     </div>

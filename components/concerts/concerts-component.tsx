@@ -22,7 +22,7 @@ async function Concerts({ promise }: { promise: Promise<Concert[]> }) {
                   {concert.date} -{concert.time} -{concert.name} - Precio:{' '}
                   {concert.price} -{' '}
                   <a
-                    className="text-blue-500 underline"
+                    className="text-blue underline"
                     target="_blank"
                     rel="noreferrer"
                     href={concert.direction}

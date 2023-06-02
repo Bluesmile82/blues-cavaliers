@@ -49,31 +49,31 @@ export default async function Page() {
 export const metadata: Metadata = {
   title: 'Blues Cavaliers',
   description: 'Una banda de blues acústico de Madrid',
-  manifest: 'public/images/site.webmanifest',
+  manifest: '/images/site.webmanifest',
   themeColor: '#ffffff',
   icons: [
     {
       rel: 'mask-icon',
-      url: 'public/images/safari-pinned-tab.svg',
+      url: '/images/safari-pinned-tab.svg',
     },
     {
       rel: 'icon',
       sizes: '32x32',
-      url: 'public/favicon-32x32.png',
+      url: '/favicon-32x32.png',
     },
     {
       rel: 'icon',
       sizes: '16x16',
-      url: 'public/favicon-16x16.png',
+      url: '/favicon-16x16.png',
     },
     {
       rel: 'favicon',
-      url: 'public/favicon.ico',
+      url: '/favicon.ico',
     },
     {
       rel: 'apple-touch-icon',
       sizes: '180x180',
-      url: 'public/images/apple-touch-icon.png',
+      url: '/images/apple-touch-icon.png',
     },
   ],
   viewport: 'width=device-width, initial-scale=1',
@@ -84,9 +84,9 @@ export const metadata: Metadata = {
     url: 'https://bluescavaliers.com',
     images: [
       {
-        url: 'https://bluescavaliers.com/images/blues-cavaliers.jpg',
-        width: 1200,
-        height: 630,
+        url: '/images/android-chrome-512x512.png',
+        width: 512,
+        height: 512,
         alt: 'Blues Cavaliers',
       },
     ],

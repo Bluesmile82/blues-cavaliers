@@ -47,7 +47,10 @@ export default async function Page() {
 
 export const metadata: Metadata = {
   title: 'Blues Cavaliers',
-  description: 'Una banda de blues acústico de Madrid',
+  description:
+    'Una destacada banda de blues acústico en Madrid. Disfruta de la auténtica esencia del blues con estos grandes músicos. Sus interpretaciones te transportarán a las raíces del género, mientras te sumerges en su contagioso ritmo. Desde los escenarios de Madrid, los Blues Cavaliers te ofrecen una experiencia musical inigualable.',
+  keywords:
+    'Blues Cavaliers, banda de blues acústico, Madrid, esencia del blues, ritmo contagioso, música en vivo, mejores bandas de blues, escena madrileña, madrid, harmónica, harmonica, guitarra, guitar, blues, banda de blues, acústico',
   manifest: '/images/site.webmanifest',
   themeColor: '#ffffff',
   icons: [

@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import NotionService from 'app/services/notion';
 import Concerts from 'app/components/concerts';
 import Links from 'app/components/links';
+import type { Metadata } from 'next';
 
 async function getData() {
   const notionService = new NotionService();
@@ -23,16 +24,15 @@ export default async function Page() {
   const concerts = await getData();
 
   return (
-    <div className="container mx-8 text-gray-300">
+    <div className=" text-gray-300">
       <h1 className="font-sans text-6xl font-medium text-gray-300">
         Blues Cavaliers
       </h1>
-      <p className="ml-1 mb-6">Una banda de blues acústico de Madrid</p>
+      <h2 className="ml-1 mb-6">Una banda de blues acústico de Madrid</h2>
       <Suspense fallback={<div>...</div>}>
         {/* @ts-expect-error Async Server Component */}
         <Concerts promise={concerts} />
       </Suspense>
-      <Links />
       <iframe
         width="100%"
         height="315"
@@ -45,3 +45,57 @@ export default async function Page() {
     </div>
   );
 }
+
+export const metadata: Metadata = {
+  title: 'Blues Cavaliers',
+  description: 'Una banda de blues acústico de Madrid',
+  manifest: 'public/images/site.webmanifest',
+  themeColor: '#ffffff',
+  icons: [
+    {
+      rel: 'mask-icon',
+      url: 'public/images/safari-pinned-tab.svg',
+    },
+    {
+      rel: 'icon',
+      sizes: '32x32',
+      url: 'public/favicon-32x32.png',
+    },
+    {
+      rel: 'icon',
+      sizes: '16x16',
+      url: 'public/favicon-16x16.png',
+    },
+    {
+      rel: 'favicon',
+      url: 'public/favicon.ico',
+    },
+    {
+      rel: 'apple-touch-icon',
+      sizes: '180x180',
+      url: 'public/images/apple-touch-icon.png',
+    },
+  ],
+  viewport: 'width=device-width, initial-scale=1',
+  openGraph: {
+    title: 'Blues Cavaliers',
+    description: 'Una banda de blues acústico de Madrid',
+    locale: 'es_ES',
+    url: 'https://bluescavaliers.com',
+    images: [
+      {
+        url: 'https://bluescavaliers.com/images/blues-cavaliers.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Blues Cavaliers',
+      },
+    ],
+    videos: [
+      {
+        url: 'https://www.youtube.com/embed/Ln6ss_0vOoY',
+        width: 800,
+        height: 600,
+      },
+    ],
+  },
+};

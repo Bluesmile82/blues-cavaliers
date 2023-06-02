@@ -64,7 +64,7 @@ function Links() {
   );
 
   return (
-    <div className="mb-4 flex">
+    <div className="flex">
       <a
         href="https://www.facebook.com/bluescavaliers"
         title="Facebook link"

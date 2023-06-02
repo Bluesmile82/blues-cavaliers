@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import NotionService from 'app/services/notion';
 import Concerts from 'app/components/concerts';
-import Links from 'app/components/links';
 import type { Metadata } from 'next';
 
 async function getData() {

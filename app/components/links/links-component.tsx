@@ -64,11 +64,11 @@ function Links() {
   );
 
   return (
-    <div className="flex">
+    <div className="mb-4 flex">
       <a
         href="https://www.facebook.com/bluescavaliers"
         title="Facebook link"
-        className="mr-4"
+        className="mr-2"
       >
         {renderFacebookSVG()}
       </a>

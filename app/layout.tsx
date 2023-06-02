@@ -1,4 +1,18 @@
 import 'styles/globals.css';
+import { Overpass, Roboto_Mono } from 'next/font/google';
+
+const inter = Overpass({
+  subsets: ['latin'],
+  weight: '400',
+  display: 'swap',
+  variable: '--font-overpass',
+});
+
+const roboto_mono = Roboto_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-roboto-mono',
+});
 
 export default async function RootLayout({
   children,
@@ -6,7 +20,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
+    <html lang="es" className={`${inter.variable} ${roboto_mono.variable}`}>
       <body className="flex h-screen items-center justify-center overflow-y-scroll bg-gray-1100 bg-[url('/grid.svg')]">
         {children}
       </body>

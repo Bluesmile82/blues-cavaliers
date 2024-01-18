@@ -33,7 +33,7 @@ export default async function Page() {
           className="shado-50/30 max-w-[800px] rounded-xl border-4 border-white shadow-lg"
           width="100%"
           height="432"
-          src="https://www.youtube.com/embed/Ln6ss_0vOoY?controls=0"
+          src="https://www.youtube.com/embed/Ln6ss_0vOoY"
           title="YouTube video player"
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

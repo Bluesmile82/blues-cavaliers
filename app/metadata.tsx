@@ -16,12 +16,12 @@ export const metadata: Metadata = {
     {
       rel: 'icon',
       sizes: '32x32',
-      url: '/favicon-32x32.png',
+      url: '/images/favicon-32x32.png',
     },
     {
       rel: 'icon',
       sizes: '16x16',
-      url: '/favicon-16x16.png',
+      url: '/images/favicon-16x16.png',
     },
     {
       rel: 'favicon',

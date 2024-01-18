@@ -22,11 +22,9 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="es" className={`${inter.variable} ${roboto_mono.variable}`}>
-      <body className="flex h-screen items-center justify-center overflow-y-scroll bg-gray-1100 bg-[url('/grid.svg')]">
-        <main className="container relative mx-8">
-          <Header />
-          {children}
-        </main>
+      <body className="flex h-screen items-center justify-center overflow-y-scroll bg-gradient-to-br from-background to-ucla-blue">
+        <Header />
+        <main className="container relative mx-8">{children}</main>
       </body>
     </html>
   );

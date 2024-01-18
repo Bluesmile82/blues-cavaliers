@@ -11,8 +11,10 @@ module.exports = {
     colors: {
       ...colors,
       gray: colors.zinc,
-      'gray-1000': 'rgb(17,17,19)',
-      'gray-1100': 'rgb(10,10,11)',
+      'gray-100': '#E9FFF9',
+      background: '#1D3354',
+      'old-rose': '#A37774',
+      'ucla-blue': '#467599',
       blue: colors.sky,
     },
     extend: {

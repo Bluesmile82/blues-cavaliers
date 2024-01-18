@@ -12,13 +12,17 @@ async function Concerts({ promise }: { promise: Promise<Concert[]> }) {
 
   return (
     <div className="ml-1 mb-6">
-      Próximos conciertos
+      <div className="text-sm">
+        {concerts && concerts.length
+          ? 'Próximos conciertos'
+          : 'No hay conciertos pendientes'}
+      </div>
       <ul>
         {concerts &&
           concerts.map(
             (concert) =>
               concert.name && (
-                <li key={concert.name} className="text-sm text-white">
+                <li key={concert.name} className="text-sm text-gray-100">
                   {concert.date} -{concert.time} -{concert.name} - Precio:{' '}
                   {concert.price} -{' '}
                   <a

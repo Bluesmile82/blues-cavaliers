@@ -24,23 +24,22 @@ export default async function Page() {
 
   return (
     <div className=" text-gray-300">
-      <h1 className="font-sans text-6xl font-medium text-gray-300">
-        Blues Cavaliers
-      </h1>
-      <h2 className="ml-1 mb-6">Una banda de blues acústico de Madrid</h2>
       <Suspense fallback={<div>...</div>}>
         {/* @ts-expect-error Async Server Component */}
         <Concerts promise={concerts} />
       </Suspense>
-      <iframe
-        width="100%"
-        height="315"
-        src="https://www.youtube.com/embed/Ln6ss_0vOoY?controls=0"
-        title="YouTube video player"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowFullScreen
-      />
+      <div className="flex items-center justify-center">
+        <iframe
+          className="shado-50/30 max-w-[800px] rounded-xl border-4 border-white shadow-lg"
+          width="100%"
+          height="432"
+          src="https://www.youtube.com/embed/Ln6ss_0vOoY?controls=0"
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        />
+      </div>
     </div>
   );
 }

@@ -64,7 +64,13 @@ function Links() {
   );
 
   return (
-    <div className="flex">
+    <div className="flex items-center">
+      <a
+        href="/media_kit.pdf"
+        title="Facebook link"
+        className="mr-4 text-white text-xl hover:text-gray-100"
+        target={'_blank'}
+      >Info programadores</a>
       <a
         href="https://www.facebook.com/bluescavaliers"
         title="Facebook link"

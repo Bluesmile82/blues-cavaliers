@@ -35,7 +35,7 @@ async function Concerts({ promise }: { promise: Promise<Concert[]> }) {
                   </a>
                 </li>
               ),
-          )}
+          ).reverse()}
       </ul>
     </div>
   );

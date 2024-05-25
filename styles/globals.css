@@ -1,3 +1,71 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+h1 {
+  display: inline-block;
+  font-size: 128px;
+
+  line-height: 128px;
+  pointer-events: none;
+}
+
+/* From https://css-irl.info/css-halftone-patterns/ */
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: linear-gradient(45deg, #55d 0%, #116 100%);
+}
+
+.halftone {
+  --stop1: 0.5px;
+  --halftone-size: 3px;
+  --bg-size: calc(var(--halftone-size) * 1.75);
+
+  filter: contrast(5) blur(1.5px) saturate(50%);
+  mix-blend-mode: lighten;
+  /* mix-blend-mode: multiply; */
+  width: 100%;
+  height: 100%;
+}
+.halftone::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+
+  background: repeat center/var(--bg-size) var(--bg-size)
+    radial-gradient(
+      ellipse at center,
+      #ddf var(--stop1),
+      transparent var(--halftone-size)
+    );
+  /* mask-image: linear-gradient(rgb(0 0 0), rgb(0 0 0 / 50%)); */
+  /* mask-image: url(https://mdn.github.io/css-examples/masking/star.svg); */
+  mask-image: conic-gradient(
+    at top center,
+    rgb(0 0 0 / 50%) 0%,
+    #000 100%,
+    rgb(0 0 0 / 50%) 80%
+  );
+  mask-image: radial-gradient(ellipse at center, rgb(0 0 0), rgb(0 0 0 / 50%));
+  /* Create a circular gradient from white center to black borders as a filter*/
+  /* mask-image: radial-gradient(circle, white 100%, black 0%); */
+  mask-size: 100% 100%;
+}
+
+@layer base {
+  .font-outline-1 {
+    -webkit-text-stroke: 1px #229;
+  }
+
+  .font-outline-2 {
+    -webkit-text-stroke: 2px #229;
+  }
+
+  .font-outline-4 {
+    -webkit-text-stroke: 4px #229;
+  }
+}

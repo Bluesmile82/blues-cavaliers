@@ -68,9 +68,11 @@ function Links() {
       <a
         href="/media_kit.pdf"
         title="Facebook link"
-        className="mr-4 text-white lg:text-xl hover:text-gray-100 text-sm"
+        className="lg:font-outline-2 mr-4 p-4 text-lg font-bold uppercase text-white hover:text-gray-100 lg:text-2xl"
         target={'_blank'}
-      >Info programadores</a>
+      >
+        Info programadores
+      </a>
       <a
         href="https://www.facebook.com/bluescavaliers"
         title="Facebook link"

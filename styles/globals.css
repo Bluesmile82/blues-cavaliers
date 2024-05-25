@@ -17,7 +17,7 @@ body {
   width: 100%;
   height: 100%;
   margin: 0;
-  background: linear-gradient(45deg, #55d 0%, #116 100%);
+  background: linear-gradient(45deg, #00d 0%, #006 100%);
 }
 
 .halftone {
@@ -25,7 +25,7 @@ body {
   --halftone-size: 3px;
   --bg-size: calc(var(--halftone-size) * 1.75);
 
-  filter: contrast(5) blur(1.5px) saturate(50%);
+  filter: contrast(2) blur(1.5px) saturate(20%) brightness(1.8);
   mix-blend-mode: lighten;
   /* mix-blend-mode: multiply; */
   width: 100%;
@@ -39,7 +39,7 @@ body {
   background: repeat center/var(--bg-size) var(--bg-size)
     radial-gradient(
       ellipse at center,
-      #ddf var(--stop1),
+      #bbb var(--stop1),
       transparent var(--halftone-size)
     );
   /* mask-image: linear-gradient(rgb(0 0 0), rgb(0 0 0 / 50%)); */

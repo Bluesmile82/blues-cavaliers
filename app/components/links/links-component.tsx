@@ -68,7 +68,7 @@ function Links() {
       <a
         href="/blues_cavaliers_media_kit.pdf"
         title="Media kit"
-        className="lg:font-outline-2 mr-4 p-4 text-lg font-bold uppercase text-white hover:text-gray-100 lg:text-2xl"
+        className="lg:font-outline-1 mr-4 p-4 font-sans text-lg font-bold uppercase tracking-wide text-white hover:text-gray-100 lg:text-2xl lg:drop-shadow-[0px_0px_1px_rgba(0,0,255,1)]"
         target={'_blank'}
       >
         Info programadores

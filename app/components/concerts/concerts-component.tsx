@@ -12,7 +12,7 @@ async function Concerts({ promise }: { promise: Promise<Concert[]> }) {
   const concerts = await promise;
 
   return (
-    <div className="ml-1 mb-6 max-w-[500px] rounded-lg bg-ucla-blue/70 p-4 text-white backdrop-blur-[2px]">
+    <div className="ml-1 mb-6 h-full max-w-[500px] rounded-lg border-4 border-white bg-background/80 p-4 text-white backdrop-blur-[2px]">
       <div className="mb-4 text-xl font-bold">
         {concerts && concerts.length
           ? 'Próximos conciertos'

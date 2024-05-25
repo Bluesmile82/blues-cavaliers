@@ -66,8 +66,8 @@ function Links() {
   return (
     <div className="flex items-center">
       <a
-        href="/media_kit.pdf"
-        title="Facebook link"
+        href="/blues_cavaliers_media_kit.pdf"
+        title="Media kit"
         className="lg:font-outline-2 mr-4 p-4 text-lg font-bold uppercase text-white hover:text-gray-100 lg:text-2xl"
         target={'_blank'}
       >

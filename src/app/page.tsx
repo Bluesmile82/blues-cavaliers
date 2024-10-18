@@ -28,7 +28,7 @@ export default async function Page() {
       <div className="text-gray-300">
         <div className="flex flex-col items-center justify-center">
           <div className="flex flex-col items-center gap-5">
-            <h1 className="font-['Ayer Poster'] my-6 text-center text-[35vw] font-bold leading-[15vw] tracking-wider tracking-wide text-white lg:text-[9vw] lg:leading-[9vw]">
+            <h1 className="font-['Ayer Poster'] my-6 text-center text-[20vw] font-bold leading-[25vw] tracking-wider  text-white lg:text-[12vw] lg:leading-[13vw]">
               BLUES CAVALIERS
             </h1>
             <div className="flex justify-center gap-4 max-lg:flex-wrap">

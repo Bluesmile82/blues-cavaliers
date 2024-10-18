@@ -3,7 +3,7 @@
 import { useRef, useMemo, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { TextureLoader } from 'three/src/loaders/TextureLoader';
-import { Float, OrbitControls, Effects, Environment } from '@react-three/drei';
+import { Float, Effects, Environment } from '@react-three/drei';
 import { EffectComposer, DepthOfField } from '@react-three/postprocessing';
 import { Mesh } from 'three';
 import { Menu } from 'lucide-react';
@@ -15,7 +15,7 @@ function Box({
   initialPosition: [number, number, number];
   isVinyl?: boolean;
 }) {
-  const meshRef = useRef<Mesh>();
+  const meshRef = useRef<Mesh>(null);
   const texture = useLoader(
     TextureLoader,
     isVinyl
@@ -83,7 +83,7 @@ function Scene() {
       ]);
     }
     return pos;
-  }, []);
+  }, []) as [number, number, number][];
   return (
     <>
       <ambientLight intensity={0.2} />
@@ -166,7 +166,7 @@ export default function Background() {
       >
         <Scene />
         <Effects>
-          <EffectComposer disableNormalPass multisampling={0}>
+          <EffectComposer multisampling={0}>
             <DepthOfField
               target={[0, 0, 8]}
               focalLength={0.2}

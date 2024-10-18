@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useMemo, useState } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { TextureLoader } from 'three/src/loaders/TextureLoader';
 import { Float, Effects, Environment } from '@react-three/drei';
@@ -73,13 +73,25 @@ function Box({
 }
 
 function Scene() {
+  const useIsMobile = () => {
+    const [isMobile, setIsMobile] = useState(false);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 868);
+    };
+    useEffect(() => {
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+    return isMobile;
+  };
+  const isMobile = useIsMobile();
   const positions = useMemo(() => {
     const pos = [];
     for (let i = 0; i < 50; i++) {
       pos.push([
-        Math.random() * 10 - 5,
-        Math.random() * 10,
-        Math.random() * 10 - 5,
+        isMobile ? Math.random() * 5 : Math.random() * 10 - 5,
+        isMobile ? Math.random() * 3 : Math.random() * 10,
+        isMobile ? Math.random() * 5 : Math.random() * 10 - 5,
       ]);
     }
     return pos;

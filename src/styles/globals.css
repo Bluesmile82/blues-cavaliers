@@ -2,6 +2,17 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+@import url('https://rsms.me/inter/inter.css');
+@font-face {
+  font-family: 'Ayer Poster';
+  src: local('Ayer Poster Medium'), local('Ayer-Poster-Medium'),
+    url('../../public/AyerPoster-Medium.woff2') format('woff2'),
+    url('../../public/AyerPoster-Medium.woff') format('woff'),
+    url('../../public/AyerPoster-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
 h1 {
   display: inline-block;
   font-size: 128px;
@@ -71,4 +82,18 @@ body {
   .font-outline-4 {
     -webkit-text-stroke: 4px #229;
   }
+}
+
+@keyframes sepiaAnimation {
+  0%,
+  100% {
+    filter: sepia(0%);
+  }
+  70% {
+    filter: sepia(100%);
+  }
+}
+
+.sepia-animate {
+  animation: sepiaAnimation 10s infinite;
 }

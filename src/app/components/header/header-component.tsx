@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import Links from 'app/components/links';
+import Links from '#/src/app/components/links';
 
 function Header() {
   return (

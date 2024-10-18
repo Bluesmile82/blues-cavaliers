@@ -1,7 +1,19 @@
-import 'styles/globals.css';
+import 'src/styles/globals.css';
 import { Rationale, Overpass, Roboto_Mono } from 'next/font/google';
-import Header from 'app/components/header';
+import Header from '#/src/app/components/header';
 import Image from 'next/image';
+import Background from '#/src/app/components/background';
+import localFont from 'next/font/local';
+
+const Ayer = localFont({
+  src: [
+    {
+      path: '../../public/AyerPoster-Medium.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+  ],
+});
 
 const inter = Overpass({
   subsets: ['latin'],
@@ -23,18 +35,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className={`${inter.variable} ${rationale.variable}`}>
+    <html
+      lang="es"
+      className={`${inter.variable} ${rationale.variable} ${Ayer.className}`}
+    >
       <body className="flex h-screen items-center justify-center overflow-y-scroll">
-        <div className="halftone absolute z-0 h-screen w-screen">
-          <Image
-            src="/images/cavaliers.webp"
-            className="h-screen w-screen object-cover"
-            alt="Blues cavaliers photo"
-            width={1024}
-            height={768}
-            layout="full"
-          />
-        </div>
+        <Background />
         <Header />
         <main className="container relative mx-8">{children}</main>
       </body>

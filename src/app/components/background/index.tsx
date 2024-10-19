@@ -11,18 +11,27 @@ import { Menu } from 'lucide-react';
 function Box({
   initialPosition,
   isVinyl = false,
+  index,
 }: {
   initialPosition: [number, number, number];
   isVinyl?: boolean;
+  index: number;
 }) {
   const meshRef = useRef<Mesh>(null);
-  const texture = useLoader(
-    TextureLoader,
-    isVinyl
-      ? '/images/cavalierslogo.png?height=200&width=200'
-      : '/images/cavalierslogo.png',
-  );
-  const speed = useMemo(() => Math.random() * 0.02 + 0.005, []);
+  const getVinlyTexture = () => {
+    if (index % 4 === 0) {
+      return '/images/vinylTommyYellow.png';
+    }
+    if (index % 3 === 0) {
+      return '/images/vinylTommyRed.png';
+    }
+    return '/images/vinylTommy.png';
+  };
+  const texture = useLoader(TextureLoader, getVinlyTexture());
+  const roughtnessMap = useLoader(TextureLoader, '/images/vinyl.jpg');
+  const normalMap = useLoader(TextureLoader, '/images/normal.png');
+
+  const speed = useMemo(() => Math.random() * 0.01 + 0.005, []);
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -47,8 +56,14 @@ function Box({
             Math.random() * Math.PI,
           ]}
         >
-          <cylinderGeometry args={[0.6, 0.6, 0.01, 32]} />
-          <meshStandardMaterial map={texture} roughness={0.7} metalness={0.3} />
+          <cylinderGeometry args={[0.6, 0.6, 0.0001, 32]} />
+          <meshStandardMaterial
+            map={texture}
+            normalMap={normalMap}
+            // metalnessMap={roughtnessMap}
+            roughnessMap={roughtnessMap}
+            metalness={0}
+          />
         </mesh>
       </Float>
     );
@@ -102,10 +117,10 @@ function Scene() {
       <directionalLight position={[5, 5, 5]} intensity={1.5} />
       <Environment preset="sunset" />
       {/* <spotLight position={[10, 20, 10]} penumbra={1} decay={0} intensity={3} color="orange" /> */}
-      <pointLight position={[0, 0, 0]} intensity={100} color="#FFA5cc" />
+      <pointLight position={[0, 0, 0]} intensity={50} color="#FFA5cc" />
       {/* <pointLight position={[0, 1, 5]} intensity={200} color="purple" /> */}
       {positions.map((position, index) => (
-        <Box key={index} initialPosition={position} isVinyl /> // = { index % 4 === 0}
+        <Box key={index} initialPosition={position} isVinyl index={index} /> // = { index % 4 === 0}
       ))}
       {/* <OrbitControls enableZoom={false} enablePan enableRotate /> */}
     </>
@@ -169,7 +184,7 @@ export default function Background() {
   const depth = 80;
 
   return (
-    <div className="sepia-animate absolute inset-0 h-full w-full overflow-hidden bg-background filter">
+    <div className="absolute inset-0 h-full w-full overflow-hidden bg-background filter">
       <Canvas
         flat
         gl={{ antialias: false }}
@@ -177,13 +192,17 @@ export default function Background() {
         camera={{ position: [0, 0, 10], fov: 20, near: 0.01, far: depth + 15 }}
       >
         <Scene />
+        {/* <mesh position={[0, 0, 0]} rotation={[0, 0, 0]}>
+          <sphereGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial color="#000000" />
+        </mesh> */}
         <Effects>
           <EffectComposer multisampling={0}>
             <DepthOfField
-              target={[0, 0, 8]}
-              focalLength={0.2}
-              bokehScale={5}
-              height={800}
+              target={[0, 0, 2]}
+              focalLength={0.05}
+              bokehScale={3}
+              height={1200}
             />
           </EffectComposer>
         </Effects>

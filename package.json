@@ -27,6 +27,7 @@
     "@heroicons/react": "1.0.6",
     "@next/font": "14.2.15",
     "@notionhq/client": "2.2.3",
+    "@react-three/cannon": "6.6.0",
     "@react-three/drei": "9.114.5",
     "@react-three/fiber": "8.17.10",
     "@react-three/postprocessing": "2.16.3",

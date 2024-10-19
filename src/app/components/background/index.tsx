@@ -7,17 +7,32 @@ import { Float, Effects, Environment } from '@react-three/drei';
 import { EffectComposer, DepthOfField } from '@react-three/postprocessing';
 import { Mesh } from 'three';
 import { Menu } from 'lucide-react';
+import { Physics, useCylinder } from '@react-three/cannon';
 
 function Box({
   initialPosition,
-  isVinyl = false,
   index,
 }: {
   initialPosition: [number, number, number];
   isVinyl?: boolean;
   index: number;
 }) {
-  const meshRef = useRef<Mesh>(null);
+  const [ref, api] = useCylinder(() => ({
+    mass: 1,
+    position: initialPosition,
+    rotation: [
+      Math.random() * Math.PI,
+      Math.random() * Math.PI,
+      Math.random() * Math.PI,
+    ],
+    args: [0.6, 0.6, 0.001, 32],
+    collisionFilter: {
+      group: 1,
+      category: 1,
+      mask: 1,
+    },
+  }));
+
   const getVinlyTexture = () => {
     if (index % 4 === 0) {
       return '/images/vinylTommyYellow.png';
@@ -31,59 +46,59 @@ function Box({
   const roughtnessMap = useLoader(TextureLoader, '/images/vinyl.jpg');
   const normalMap = useLoader(TextureLoader, '/images/normal.png');
 
-  const speed = useMemo(() => Math.random() * 0.01 + 0.005, []);
+  const speed = useMemo(() => Math.random() * 10 + 40, []);
+  const rotationSpeed = speed / 1000;
+  useEffect(() => {
+    // api.velocity.set(0, 0, speed);
+    api.applyForce(
+      [0, -speed, 1],
+      [rotationSpeed, rotationSpeed, rotationSpeed],
+    );
+  }, []);
 
-  useFrame((state) => {
-    if (!meshRef.current) return;
-    meshRef.current.rotation.x += 0.002;
-    meshRef.current.rotation.y += 0.002;
-    meshRef.current.position.y -= speed;
-
-    if (meshRef.current.position.y < -15) {
-      meshRef.current.position.y = 15;
+  api.position.subscribe(([x, y, z]) => {
+    if (y < -4) {
+      api.position.set(x, 4, z);
     }
   });
 
-  if (isVinyl) {
-    return (
-      <Float speed={1} rotationIntensity={0.5} floatIntensity={1}>
-        <mesh
-          ref={meshRef}
-          position={initialPosition}
-          rotation={[
-            Math.random() * Math.PI,
-            Math.random() * Math.PI,
-            Math.random() * Math.PI,
-          ]}
-        >
-          <cylinderGeometry args={[0.6, 0.6, 0.0001, 32]} />
-          <meshStandardMaterial
-            map={texture}
-            normalMap={normalMap}
-            // metalnessMap={roughtnessMap}
-            roughnessMap={roughtnessMap}
-            metalness={0}
-          />
-        </mesh>
-      </Float>
-    );
-  }
+  // useFrame((state) => {
+  // if (!ref.current) return;
+  // Check the y position and reset if necessary
+  // api.position.subscribe(([x, y, z]) => {
+  //   if (y < -4) {
+  //     api.position.set(x, 4, z);
+  //   }
+  // });
+
+  // ref.current.rotation.x += 0.2;
+  // ref.current.rotation.y += 0.2;
+
+  // apply force to rotate
+
+  // api.applyForce([0, -0.1, 0], [0, 0, 0]);
+
+  // });
 
   return (
-    <Float speed={1} rotationIntensity={0.5} floatIntensity={1}>
-      <mesh
-        ref={meshRef}
-        position={initialPosition}
-        rotation={[
-          Math.random() * Math.PI,
-          Math.random() * Math.PI,
-          Math.random() * Math.PI,
-        ]}
-      >
-        <boxGeometry args={[1.2, 3.6, 0.3]} />
-        <meshStandardMaterial map={texture} roughness={0.7} metalness={0.3} />
-      </mesh>
-    </Float>
+    // <Float speed={1} rotationIntensity={0.5} floatIntensity={1}>
+    <mesh
+      ref={ref}
+      rotation={[
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+      ]}
+    >
+      <cylinderGeometry args={[0.6, 0.6, 0.0001, 32]} />
+      <meshStandardMaterial
+        map={texture}
+        normalMap={normalMap}
+        roughnessMap={roughtnessMap}
+        metalness={0}
+      />
+    </mesh>
+    // </Float>
   );
 }
 
@@ -102,7 +117,7 @@ function Scene() {
   const isMobile = useIsMobile();
   const positions = useMemo(() => {
     const pos = [];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 40; i++) {
       pos.push([
         isMobile ? Math.random() * 5 : Math.random() * 10 - 5,
         isMobile ? Math.random() * 3 : Math.random() * 10,
@@ -110,19 +125,19 @@ function Scene() {
       ]);
     }
     return pos;
-  }, []) as [number, number, number][];
+  }, [isMobile]) as [number, number, number][];
+
+  // If the current position of the item has y less than -10, then position it on the y 10
+
   return (
     <>
       <ambientLight intensity={0.2} />
       <directionalLight position={[5, 5, 5]} intensity={1.5} />
       <Environment preset="sunset" />
-      {/* <spotLight position={[10, 20, 10]} penumbra={1} decay={0} intensity={3} color="orange" /> */}
       <pointLight position={[0, 0, 0]} intensity={50} color="#FFA5cc" />
-      {/* <pointLight position={[0, 1, 5]} intensity={200} color="purple" /> */}
       {positions.map((position, index) => (
         <Box key={index} initialPosition={position} isVinyl index={index} /> // = { index % 4 === 0}
       ))}
-      {/* <OrbitControls enableZoom={false} enablePan enableRotate /> */}
     </>
   );
 }
@@ -191,11 +206,9 @@ export default function Background() {
         dpr={[1, 1.5]}
         camera={{ position: [0, 0, 10], fov: 20, near: 0.01, far: depth + 15 }}
       >
-        <Scene />
-        {/* <mesh position={[0, 0, 0]} rotation={[0, 0, 0]}>
-          <sphereGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color="#000000" />
-        </mesh> */}
+        <Physics gravity={[0, 0, 0]}>
+          <Scene />
+        </Physics>
         <Effects>
           <EffectComposer multisampling={0}>
             <DepthOfField

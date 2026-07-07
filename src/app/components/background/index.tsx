@@ -3,11 +3,17 @@
 import { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { TextureLoader } from 'three/src/loaders/TextureLoader';
-import { Float, Effects, Environment } from '@react-three/drei';
-import { EffectComposer, DepthOfField } from '@react-three/postprocessing';
-import { Mesh } from 'three';
+import { Mesh, Vector3 } from 'three';
 import { Menu } from 'lucide-react';
 import { Physics, useCylinder } from '@react-three/cannon';
+
+// Top of the fall loop. Camera (fov 20, z=10) sees roughly y ∈ [-2, 2] at the
+// vinyls' depth, so spawn/recycle a little above the frame and fall through it.
+const TOP = 3.5;
+const CAMERA_Z = 10;
+
+// reused scratch vector for the per-frame spin-axis calc (avoids per-frame alloc)
+const SPIN_AXIS = new Vector3();
 
 function Box({
   initialPosition,
@@ -17,12 +23,15 @@ function Box({
   isVinyl?: boolean;
   index: number;
 }) {
-  const [ref, api] = useCylinder(() => ({
+  const [ref, api] = useCylinder<Mesh>(() => ({
     mass: 1,
     position: initialPosition,
+    // cylinder axis is Y by default (disc faces up/down); rotate ~90° about X so
+    // the flat record face points at the camera (+Z). Add a random tilt on each
+    // axis so every vinyl faces the camera at its own slightly different angle.
     rotation: [
-      Math.random() * Math.PI,
-      Math.random() * Math.PI,
+      Math.PI / 2 + (Math.random() - 0.5) * 0.8,
+      (Math.random() - 0.5) * 0.8,
       Math.random() * Math.PI,
     ],
     args: [0.6, 0.6, 0.001, 32],
@@ -46,49 +55,38 @@ function Box({
   const roughtnessMap = useLoader(TextureLoader, '/images/vinyl.jpg');
   const normalMap = useLoader(TextureLoader, '/images/normal.png');
 
-  const speed = useMemo(() => Math.random() * 10 + 40, []);
-  const rotationSpeed = speed / 1000;
+  // gentle, per-vinyl fall speed (world units/sec) — slow enough to stay on
+  // screen the whole way down instead of the old off-screen impulse
+  const fallSpeed = useMemo(() => Math.random() * 0.4 + 0.6, []);
+  const hovered = useRef(false);
+
   useEffect(() => {
-    // api.velocity.set(0, 0, speed);
-    api.applyForce(
-      [0, -speed, 1],
-      [rotationSpeed, rotationSpeed, rotationSpeed],
-    );
+    // constant downward velocity (no gravity in the world); recycle to the top
+    // once below the visible band so vinyls fall on a continuous loop
+    api.velocity.set(0, -fallSpeed, 0);
+    const unsubPos = api.position.subscribe(([x, y, z]) => {
+      if (y < -TOP) api.position.set(x, TOP, z);
+    });
+    return unsubPos;
   }, []);
 
-  api.position.subscribe(([x, y, z]) => {
-    if (y < -4) {
-      api.position.set(x, 4, z);
-    }
+  // Spin the record about its OWN face-normal axis (the cylinder's local Y), so
+  // it turns like it's playing regardless of its tilt or where it is on screen.
+  // Faster when hovered. angularVelocity is world-space, so map the local axis
+  // through the current orientation each frame.
+  useFrame(() => {
+    api.velocity.set(0, -fallSpeed, 0);
+    if (!ref.current) return;
+    const rate = hovered.current ? 3 : 0.6;
+    SPIN_AXIS.set(0, 1, 0).applyQuaternion(ref.current.quaternion).multiplyScalar(rate);
+    api.angularVelocity.set(SPIN_AXIS.x, SPIN_AXIS.y, SPIN_AXIS.z);
   });
 
-  // useFrame((state) => {
-  // if (!ref.current) return;
-  // Check the y position and reset if necessary
-  // api.position.subscribe(([x, y, z]) => {
-  //   if (y < -4) {
-  //     api.position.set(x, 4, z);
-  //   }
-  // });
-
-  // ref.current.rotation.x += 0.2;
-  // ref.current.rotation.y += 0.2;
-
-  // apply force to rotate
-
-  // api.applyForce([0, -0.1, 0], [0, 0, 0]);
-
-  // });
-
   return (
-    // <Float speed={1} rotationIntensity={0.5} floatIntensity={1}>
     <mesh
       ref={ref}
-      rotation={[
-        Math.random() * Math.PI,
-        Math.random() * Math.PI,
-        Math.random() * Math.PI,
-      ]}
+      onPointerOver={() => (hovered.current = true)}
+      onPointerOut={() => (hovered.current = false)}
     >
       <cylinderGeometry args={[0.6, 0.6, 0.0001, 32]} />
       <meshStandardMaterial
@@ -98,7 +96,6 @@ function Box({
         metalness={0}
       />
     </mesh>
-    // </Float>
   );
 }
 
@@ -117,11 +114,14 @@ function Scene() {
   const isMobile = useIsMobile();
   const positions = useMemo(() => {
     const pos = [];
+    const xSpread = isMobile ? 3 : 7; // fill the width at this narrow fov
     for (let i = 0; i < 40; i++) {
       pos.push([
-        isMobile ? Math.random() * 5 : Math.random() * 10 - 5,
-        isMobile ? Math.random() * 3 : Math.random() * 10,
-        isMobile ? Math.random() * 5 : Math.random() * 10 - 5,
+        Math.random() * xSpread * 2 - xSpread,
+        // stagger the initial fall across the whole loop height so the screen
+        // is populated from the first frame
+        Math.random() * (TOP * 2) - TOP,
+        Math.random() * 4 - 2, // keep vinyls near the focal plane (z≈0)
       ]);
     }
     return pos;
@@ -133,7 +133,6 @@ function Scene() {
     <>
       <ambientLight intensity={0.2} />
       <directionalLight position={[5, 5, 5]} intensity={1.5} />
-      <Environment preset="sunset" />
       <pointLight position={[0, 0, 0]} intensity={50} color="#FFA5cc" />
       {positions.map((position, index) => (
         <Box key={index} initialPosition={position} isVinyl index={index} /> // = { index % 4 === 0}
@@ -196,29 +195,17 @@ function HamburgerMenu() {
 }
 
 export default function Background() {
-  const depth = 80;
-
   return (
     <div className="absolute inset-0 h-full w-full overflow-hidden bg-background filter">
       <Canvas
         flat
-        gl={{ antialias: false }}
+        gl={{ antialias: false, powerPreference: 'high-performance' }}
         dpr={[1, 1.5]}
-        camera={{ position: [0, 0, 10], fov: 20, near: 0.01, far: depth + 15 }}
+        camera={{ position: [0, 0, CAMERA_Z], fov: 20, near: 0.01, far: 95 }}
       >
         <Physics gravity={[0, 0, 0]}>
           <Scene />
         </Physics>
-        <Effects>
-          <EffectComposer multisampling={0}>
-            <DepthOfField
-              target={[0, 0, 2]}
-              focalLength={0.05}
-              bokehScale={3}
-              height={1200}
-            />
-          </EffectComposer>
-        </Effects>
       </Canvas>
       {/* <HamburgerMenu /> */}
     </div>

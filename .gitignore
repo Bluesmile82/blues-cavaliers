@@ -35,3 +35,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+.playwright-mcp/
+stencil.jpeg
+final-nospin.jpeg
+dof-fixed.jpeg

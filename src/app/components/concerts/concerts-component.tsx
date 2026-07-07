@@ -32,7 +32,7 @@ async function Concerts({ promise }: { promise: Promise<Concert[]> }) {
                       }{' '}
                       - Precio: {concert.price} -{' '}
                       <a
-                        className="text-gray-300 underline"
+                        className="text-gray-300 underline pointer-events-auto"
                         target="_blank"
                         rel="noreferrer"
                         href={concert.direction_link}

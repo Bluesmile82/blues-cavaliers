@@ -26,14 +26,16 @@ export default async function Page() {
   return (
     <>
       <div className="text-gray-300">
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center pointer-events-none">
           <div className="flex flex-col items-center gap-5">
             <h1 className="font-['Ayer Poster'] my-6 text-center text-[20vw] font-bold leading-[25vw] tracking-wider  text-white lg:text-[12vw] lg:leading-[13vw]">
               BLUES CAVALIERS
             </h1>
-            <div className="flex justify-center gap-4 max-lg:flex-wrap">
+            {/* only the video + concerts/links stay interactive; the rest lets
+                pointer events fall through to the 3D vinyls behind */}
+            <div className="pointer-events-none flex justify-center gap-4 max-lg:flex-wrap">
               <iframe
-                className="shadow-50/30 max-w-[400px] rounded-xl border-4 border-white shadow-lg"
+                className="shadow-50/30 pointer-events-auto max-w-[400px] rounded-xl border-4 border-white shadow-lg"
                 width="100%"
                 height="232"
                 src="https://www.youtube.com/embed/Ln6ss_0vOoY"

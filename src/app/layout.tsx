@@ -42,7 +42,7 @@ export default async function RootLayout({
       <body className="flex h-screen items-center justify-center overflow-y-scroll">
         <Background />
         <Header />
-        <main className="container relative mx-8">{children}</main>
+        <main className="container relative mx-8 pointer-events-none">{children}</main>
       </body>
     </html>
   );

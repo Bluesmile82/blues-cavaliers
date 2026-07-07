@@ -7,12 +7,16 @@ export default class NotionService {
 
   async getInfo() {
     const database = process.env.NOTION_BLOG_DATABASE_ID ?? '';
-    // list blog posts
-    const response = await this.client.databases.query({
-      database_id: database,
-    });
-    if (response.results) {
-      return response.results.map((res) => res.properties);
+    try {
+      // list blog posts
+      const response = await this.client.databases.query({
+        database_id: database,
+      });
+      return response.results?.map((res) => res.properties) ?? [];
+    } catch (err) {
+      // ponytail: bad/missing Notion token → render empty instead of crashing the page
+      console.error('Notion getInfo failed:', err.message);
+      return [];
     }
   }
 }

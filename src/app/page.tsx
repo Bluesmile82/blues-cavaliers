@@ -33,7 +33,9 @@ export default async function Page() {
             </h1>
             {/* only the video + concerts/links stay interactive; the rest lets
                 pointer events fall through to the 3D vinyls behind */}
-            <div className="pointer-events-none flex justify-center gap-4 max-lg:flex-wrap">
+            {/* raised above the foreground vinyl canvas (z-10 in layout) so the
+                video and concerts stay clickable while vinyls spin behind them */}
+            <div className="relative z-20 flex justify-center gap-4 max-lg:flex-wrap">
               <iframe
                 className="shadow-50/30 pointer-events-auto max-w-[400px] rounded-xl border-4 border-white shadow-lg"
                 width="100%"

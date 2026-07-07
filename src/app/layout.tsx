@@ -2,7 +2,7 @@ import 'src/styles/globals.css';
 import { Rationale, Overpass, Roboto_Mono } from 'next/font/google';
 import Header from '#/src/app/components/header';
 import Image from 'next/image';
-import Background from '#/src/app/components/background';
+import Background, { Foreground } from '#/src/app/components/background';
 import localFont from 'next/font/local';
 
 const Ayer = localFont({
@@ -42,7 +42,10 @@ export default async function RootLayout({
       <body className="flex h-screen items-center justify-center overflow-y-scroll">
         <Background />
         <Header />
-        <main className="container relative mx-8 pointer-events-none">{children}</main>
+        <main className="container relative mx-8 pointer-events-none">
+          {children}
+        </main>
+        <Foreground />
       </body>
     </html>
   );

@@ -3,141 +3,263 @@
 import { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { TextureLoader } from 'three/src/loaders/TextureLoader';
-import { Mesh, Vector3 } from 'three';
+import { EffectComposer, Noise, Vignette } from '@react-three/postprocessing';
+import * as THREE from 'three';
+import { Mesh } from 'three';
 import { Menu } from 'lucide-react';
-import { Physics, useCylinder } from '@react-three/cannon';
 
 // Top of the fall loop. Camera (fov 20, z=10) sees roughly y ∈ [-2, 2] at the
 // vinyls' depth, so spawn/recycle a little above the frame and fall through it.
 const TOP = 3.5;
 const CAMERA_Z = 10;
+const RADIAL_SEGMENTS = 48; // grooves come from the texture; 48 keeps the rim smooth
+const GEOMETRY_HEIGHT = 0.0001;
 
-// reused scratch vector for the per-frame spin-axis calc (avoids per-frame alloc)
-const SPIN_AXIS = new Vector3();
+// reused local-Y axis for the per-frame spin (cylinder's height axis is its Y,
+// which is the disc face-normal — i.e. how a record actually spins)
+const Y_AXIS = new THREE.Vector3(0, 1, 0);
 
-function Box({
-  initialPosition,
-  index,
+// idle / hovered spin in rad/sec — slow and steady, faster when interacted with
+const SPIN_IDLE = 0.2;
+const SPIN_HOVER = 1.2;
+
+type Variant = 'tommy' | 'red' | 'yellow';
+
+function variantForIndex(index: number): Variant {
+  if (index % 4 === 0) return 'yellow';
+  if (index % 3 === 0) return 'red';
+  return 'tommy';
+}
+
+type ItemData = {
+  position: [number, number, number];
+  rotation: [number, number, number];
+  fallSpeed: number;
+  variant: Variant;
+};
+
+function Vinyl({
+  item,
+  geometry,
+  material,
 }: {
-  initialPosition: [number, number, number];
-  isVinyl?: boolean;
-  index: number;
+  item: ItemData;
+  geometry: THREE.CylinderGeometry;
+  material: THREE.Material;
 }) {
-  const [ref, api] = useCylinder<Mesh>(() => ({
-    mass: 1,
-    position: initialPosition,
-    // cylinder axis is Y by default (disc faces up/down); rotate ~90° about X so
-    // the flat record face points at the camera (+Z). Add a random tilt on each
-    // axis so every vinyl faces the camera at its own slightly different angle.
-    rotation: [
-      Math.PI / 2 + (Math.random() - 0.5) * 0.8,
-      (Math.random() - 0.5) * 0.8,
-      Math.random() * Math.PI,
-    ],
-    args: [0.6, 0.6, 0.001, 32],
-    collisionFilter: {
-      group: 1,
-      category: 1,
-      mask: 1,
-    },
-  }));
-
-  const getVinlyTexture = () => {
-    if (index % 4 === 0) {
-      return '/images/vinylTommyYellow.png';
-    }
-    if (index % 3 === 0) {
-      return '/images/vinylTommyRed.png';
-    }
-    return '/images/vinylTommy.png';
-  };
-  const texture = useLoader(TextureLoader, getVinlyTexture());
-  const roughtnessMap = useLoader(TextureLoader, '/images/vinyl.jpg');
-  const normalMap = useLoader(TextureLoader, '/images/normal.png');
-
-  // gentle, per-vinyl fall speed (world units/sec) — slow enough to stay on
-  // screen the whole way down instead of the old off-screen impulse
-  const fallSpeed = useMemo(() => Math.random() * 0.4 + 0.6, []);
+  const ref = useRef<Mesh>(null);
   const hovered = useRef(false);
 
-  useEffect(() => {
-    // constant downward velocity (no gravity in the world); recycle to the top
-    // once below the visible band so vinyls fall on a continuous loop
-    api.velocity.set(0, -fallSpeed, 0);
-    const unsubPos = api.position.subscribe(([x, y, z]) => {
-      if (y < -TOP) api.position.set(x, TOP, z);
-    });
-    return unsubPos;
-  }, []);
-
-  // Spin the record about its OWN face-normal axis (the cylinder's local Y), so
-  // it turns like it's playing regardless of its tilt or where it is on screen.
-  // Faster when hovered. angularVelocity is world-space, so map the local axis
-  // through the current orientation each frame.
-  useFrame(() => {
-    api.velocity.set(0, -fallSpeed, 0);
-    if (!ref.current) return;
-    const rate = hovered.current ? 3 : 0.6;
-    SPIN_AXIS.set(0, 1, 0).applyQuaternion(ref.current.quaternion).multiplyScalar(rate);
-    api.angularVelocity.set(SPIN_AXIS.x, SPIN_AXIS.y, SPIN_AXIS.z);
+  useFrame((_, delta) => {
+    const m = ref.current;
+    if (!m) return;
+    // continuous fall; recycle to the top once below the visible band
+    m.position.y -= item.fallSpeed * delta;
+    if (m.position.y < -TOP) m.position.y = TOP;
+    // spin about local Y (the disc face-normal) — like a record playing
+    m.rotateOnAxis(Y_AXIS, (hovered.current ? SPIN_HOVER : SPIN_IDLE) * delta);
   });
 
   return (
     <mesh
       ref={ref}
+      geometry={geometry}
+      material={material}
+      position={item.position}
+      rotation={item.rotation}
       onPointerOver={() => (hovered.current = true)}
       onPointerOut={() => (hovered.current = false)}
-    >
-      <cylinderGeometry args={[0.6, 0.6, 0.0001, 32]} />
-      <meshStandardMaterial
-        map={texture}
-        normalMap={normalMap}
-        roughnessMap={roughtnessMap}
-        metalness={0}
-      />
-    </mesh>
+    />
   );
 }
 
-function Scene() {
-  const useIsMobile = () => {
-    const [isMobile, setIsMobile] = useState(false);
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 868);
-    };
-    useEffect(() => {
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
-    return isMobile;
-  };
-  const isMobile = useIsMobile();
-  const positions = useMemo(() => {
-    const pos = [];
-    const xSpread = isMobile ? 3 : 7; // fill the width at this narrow fov
-    for (let i = 0; i < 40; i++) {
-      pos.push([
-        Math.random() * xSpread * 2 - xSpread,
-        // stagger the initial fall across the whole loop height so the screen
-        // is populated from the first frame
-        Math.random() * (TOP * 2) - TOP,
-        Math.random() * 4 - 2, // keep vinyls near the focal plane (z≈0)
-      ]);
-    }
-    return pos;
-  }, [isMobile]) as [number, number, number][];
+/**
+ * Renders a single layer of falling vinyls. Used twice: once behind the page
+ * content (z < camera) and once in front of it (z closer to camera) so vinyls
+ * can pass over the "BLUES CAVALIERS" h1.
+ *
+ * Geometry and the 3 materials (one per texture variant) are created once per
+ * layer and shared by every mesh — three.js then issues very cheap draw calls
+ * (no per-mesh GPU resource upload).
+ */
+function VinylLayer({
+  count,
+  radius,
+  xSpread,
+  zRange,
+}: {
+  count: number;
+  radius: number;
+  xSpread: number;
+  zRange: [number, number];
+}) {
+  const [tommyTex, redTex, yellowTex, roughnessMap, normalMap] = useLoader(
+    TextureLoader,
+    [
+      '/images/vinylTommy.png',
+      '/images/vinylTommyRed.png',
+      '/images/vinylTommyYellow.png',
+      '/images/vinyl.jpg',
+      '/images/normal.png',
+    ],
+  );
 
-  // If the current position of the item has y less than -10, then position it on the y 10
+  const geometry = useMemo(
+    () =>
+      new THREE.CylinderGeometry(
+        radius,
+        radius,
+        GEOMETRY_HEIGHT,
+        RADIAL_SEGMENTS,
+      ),
+    [radius],
+  );
+
+  const materials = useMemo(
+    () => ({
+      tommy: new THREE.MeshStandardMaterial({
+        map: tommyTex,
+        normalMap,
+        roughnessMap,
+        metalness: 0,
+      }),
+      red: new THREE.MeshStandardMaterial({
+        map: redTex,
+        normalMap,
+        roughnessMap,
+        metalness: 0,
+      }),
+      yellow: new THREE.MeshStandardMaterial({
+        map: yellowTex,
+        normalMap,
+        roughnessMap,
+        metalness: 0,
+      }),
+    }),
+    [tommyTex, redTex, yellowTex, normalMap, roughnessMap],
+  );
+
+  // free GPU resources when the layer unmounts
+  useEffect(() => {
+    return () => {
+      geometry.dispose();
+      materials.tommy.dispose();
+      materials.red.dispose();
+      materials.yellow.dispose();
+    };
+  }, [geometry, materials]);
+
+  const items = useMemo<ItemData[]>(() => {
+    const arr: ItemData[] = [];
+    for (let i = 0; i < count; i++) {
+      arr.push({
+        position: [
+          Math.random() * xSpread * 2 - xSpread,
+          // stagger the initial fall across the whole loop height so the screen
+          // is populated from the first frame
+          Math.random() * (TOP * 2) - TOP,
+          Math.random() * (zRange[1] - zRange[0]) + zRange[0],
+        ],
+        // cylinder axis is Y by default (disc faces up/down); rotate ~90° about
+        // X so the flat record face points at the camera (+Z). Add a random
+        // tilt on each axis so every vinyl faces the camera at its own angle.
+        rotation: [
+          Math.PI / 2 + (Math.random() - 0.5) * 0.8,
+          (Math.random() - 0.5) * 0.8,
+          Math.random() * Math.PI,
+        ],
+        // gentle, per-vinyl fall speed (world units/sec)
+        fallSpeed: Math.random() * 0.4 + 0.6,
+        variant: variantForIndex(i),
+      });
+    }
+    return arr;
+  }, [count, xSpread, zRange]);
 
   return (
     <>
-      <ambientLight intensity={0.2} />
+      <ambientLight intensity={0.1} />
       <directionalLight position={[5, 5, 5]} intensity={1.5} />
-      <pointLight position={[0, 0, 0]} intensity={50} color="#FFA5cc" />
-      {positions.map((position, index) => (
-        <Box key={index} initialPosition={position} isVinyl index={index} /> // = { index % 4 === 0}
+      <pointLight position={[1, 0, 0]} intensity={30} color="#FFA5cc" />
+      <pointLight position={[0, 1, 0]} intensity={30} color="#55A5ff" />
+      <pointLight position={[0, 0, 1]} intensity={30} color="#cccca5" />
+      {items.map((item, i) => (
+        <Vinyl
+          key={i}
+          item={item}
+          geometry={geometry}
+          material={materials[item.variant]}
+        />
       ))}
     </>
+  );
+}
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 868);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return isMobile;
+}
+
+const CANVAS_PROPS = {
+  flat: true,
+  gl: { antialias: false, powerPreference: 'high-performance' as const },
+  dpr: [1, 1.5] as [number, number],
+  camera: {
+    position: [0, 0, CAMERA_Z] as [number, number, number],
+    fov: 20,
+    near: 0.01,
+    far: 95,
+  },
+};
+
+/** Vinyls behind the page content (h1, video, concerts). Hoverable. Gets the
+ *  Noise + Vignette postprocessing pass on desktop (skipped on mobile to keep
+ *  frame rate healthy on high-DPR phones). */
+export default function Background() {
+  const isMobile = useIsMobile();
+  return (
+    <div className="absolute inset-0 h-full w-full overflow-hidden bg-background filter">
+      <Canvas {...CANVAS_PROPS}>
+        <VinylLayer
+          count={isMobile ? 18 : 28}
+          radius={0.6}
+          xSpread={isMobile ? 3 : 7}
+          zRange={[-2, 2]}
+        />
+        {!isMobile && (
+          <EffectComposer enableNormalPass={false} multisampling={0}>
+            <Noise opacity={0.06} />
+            <Vignette darkness={0.7} offset={0.35} />
+          </EffectComposer>
+        )}
+      </Canvas>
+    </div>
+  );
+}
+
+/** Vinyls in front of the page content — closer to camera (z>0) so they pass
+ *  over the h1 for parallax depth, and hoverable (faster spin on hover).
+ *  pointer-events reach this canvas everywhere except over the iframe/concerts,
+ *  which sit above it via z-index in page.tsx. */
+export function Foreground() {
+  const isMobile = useIsMobile();
+  return (
+    <div className="absolute inset-0 z-10 h-full w-full overflow-hidden">
+      <Canvas {...CANVAS_PROPS}>
+        <VinylLayer
+          count={isMobile ? 4 : 7}
+          radius={0.6}
+          xSpread={isMobile ? 2 : 4}
+          zRange={[2.5, 4.5]}
+        />
+      </Canvas>
+    </div>
   );
 }
 
@@ -190,24 +312,6 @@ function HamburgerMenu() {
           </ul>
         </div>
       )}
-    </div>
-  );
-}
-
-export default function Background() {
-  return (
-    <div className="absolute inset-0 h-full w-full overflow-hidden bg-background filter">
-      <Canvas
-        flat
-        gl={{ antialias: false, powerPreference: 'high-performance' }}
-        dpr={[1, 1.5]}
-        camera={{ position: [0, 0, CAMERA_Z], fov: 20, near: 0.01, far: 95 }}
-      >
-        <Physics gravity={[0, 0, 0]}>
-          <Scene />
-        </Physics>
-      </Canvas>
-      {/* <HamburgerMenu /> */}
     </div>
   );
 }

@@ -4,6 +4,9 @@ import Concerts from '#/src/app/components/concerts';
 // export { metadata } from './metadata';
 import Background from 'src/app/components/background';
 
+// re-fetch Notion concerts hourly instead of freezing them at build time
+export const revalidate = 3600;
+
 async function getData() {
   const notionService = new NotionService();
   const data = await notionService.getInfo();

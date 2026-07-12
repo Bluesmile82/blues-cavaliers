@@ -13,11 +13,10 @@ import { Menu } from 'lucide-react';
 const TOP = 3.5;
 const CAMERA_Z = 10;
 const RADIAL_SEGMENTS = 48; // grooves come from the texture; 48 keeps the rim smooth
-const GEOMETRY_HEIGHT = 0.0001;
 
-// reused local-Y axis for the per-frame spin (cylinder's height axis is its Y,
-// which is the disc face-normal — i.e. how a record actually spins)
-const Y_AXIS = new THREE.Vector3(0, 1, 0);
+// reused local-Z axis for the per-frame spin (a CircleGeometry's face normal
+// is its local Z — spinning about it is how a record actually spins)
+const Z_AXIS = new THREE.Vector3(0, 0, 1);
 
 // idle / hovered spin in rad/sec — slow and steady, faster when interacted with
 const SPIN_IDLE = 0.2;
@@ -44,7 +43,7 @@ function Vinyl({
   material,
 }: {
   item: ItemData;
-  geometry: THREE.CylinderGeometry;
+  geometry: THREE.CircleGeometry;
   material: THREE.Material;
 }) {
   const ref = useRef<Mesh>(null);
@@ -56,8 +55,8 @@ function Vinyl({
     // continuous fall; recycle to the top once below the visible band
     m.position.y -= item.fallSpeed * delta;
     if (m.position.y < -TOP) m.position.y = TOP;
-    // spin about local Y (the disc face-normal) — like a record playing
-    m.rotateOnAxis(Y_AXIS, (hovered.current ? SPIN_HOVER : SPIN_IDLE) * delta);
+    // spin about local Z (the disc face-normal) — like a record playing
+    m.rotateOnAxis(Z_AXIS, (hovered.current ? SPIN_HOVER : SPIN_IDLE) * delta);
   });
 
   return (
@@ -105,13 +104,7 @@ function VinylLayer({
   );
 
   const geometry = useMemo(
-    () =>
-      new THREE.CylinderGeometry(
-        radius,
-        radius,
-        GEOMETRY_HEIGHT,
-        RADIAL_SEGMENTS,
-      ),
+    () => new THREE.CircleGeometry(radius, RADIAL_SEGMENTS),
     [radius],
   );
 
@@ -160,16 +153,15 @@ function VinylLayer({
           Math.random() * (TOP * 2) - TOP,
           Math.random() * (zRange[1] - zRange[0]) + zRange[0],
         ],
-        // cylinder axis is Y by default (disc faces up/down); rotate ~90° about
-        // X so the flat record face points at the camera (+Z). Add a random
-        // tilt on each axis so every vinyl faces the camera at its own angle.
+        // a circle already faces the camera (+Z); random tilt on X/Y so every
+        // vinyl faces the camera at its own angle, random Z for spin phase
         rotation: [
-          Math.PI / 2 + (Math.random() - 0.5) * 0.8,
-          (Math.random() - 0.5) * 0.8,
+          (Math.random() - 0.5) * 1.8,
+          (Math.random() - 0.5) * 2.1,
           Math.random() * Math.PI,
         ],
         // gentle, per-vinyl fall speed (world units/sec)
-        fallSpeed: Math.random() * 0.4 + 0.6,
+        fallSpeed: Math.random() * 0.4 + 0.2,
         variant: variantForIndex(i),
       });
     }

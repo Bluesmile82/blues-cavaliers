@@ -12,7 +12,9 @@ function upcomingConcertsSorted(concerts: Concert[]) {
   const today = new Date().toISOString().slice(0, 10);
   return [...concerts]
     .filter((concert) => !concert._isoDate || concert._isoDate >= today)
-    .sort((a, b) => (a._isoDate ?? '').localeCompare(b._isoDate ?? ''));
+    .sort((a, b) =>
+      (a._isoDate ?? '9999-12-31').localeCompare(b._isoDate ?? '9999-12-31'),
+    );
 }
 
 async function Concerts({ promise }: { promise: Promise<Concert[]> }) {

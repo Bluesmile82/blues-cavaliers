@@ -3,7 +3,10 @@ import Links from '#/src/app/components/links';
 
 function Header() {
   return (
-    <header className="container absolute top-4 flex w-full justify-between border-b border-gray-100/10 pb-2">
+    // z-20: above the foreground vinyl canvas (z-10 in background/index.tsx),
+    // otherwise its full-screen <canvas> intercepts every click before it
+    // reaches the Facebook/Instagram/media-kit links below.
+    <header className="container absolute top-4 z-20 flex w-full justify-between border-b border-gray-100/10 pb-2">
       <div className="flex items-end justify-center">
         {/* <div className="flex items-center justify-center">
           <img

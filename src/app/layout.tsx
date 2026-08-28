@@ -3,17 +3,12 @@ import { Rationale, Overpass, Roboto_Mono } from 'next/font/google';
 import Header from '#/src/app/components/header';
 import Image from 'next/image';
 import Background, { Foreground } from '#/src/app/components/background';
-import localFont from 'next/font/local';
 
-const Ayer = localFont({
-  src: [
-    {
-      path: '../../public/AyerPoster-Medium.woff2',
-      weight: '400',
-      style: 'normal',
-    },
-  ],
-});
+// "Ayer Poster" (the display font used for headings) is registered once via
+// @font-face in globals.css and applied selectively with font-['Ayer Poster'].
+// It used to also be loaded here via next/font/local and applied to <html>,
+// which forced the decorative poster font onto every piece of body text on
+// the site (concert listings, bios, etc.) instead of just headings.
 
 const inter = Overpass({
   subsets: ['latin'],
@@ -35,14 +30,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="es"
-      className={`${inter.variable} ${rationale.variable} ${Ayer.className}`}
-    >
-      <body className="flex h-screen items-center justify-center overflow-y-scroll">
+    <html lang="es" className={`${inter.variable} ${rationale.variable}`}>
+      <body className="relative min-h-screen">
         <Background />
         <Header />
-        <main className="container relative mx-8 pointer-events-none">
+        <main className="container pointer-events-none relative mx-8">
           {children}
         </main>
         <Foreground />

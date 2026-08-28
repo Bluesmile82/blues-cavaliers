@@ -24,14 +24,14 @@ async function Concerts({ promise }: { promise: Promise<Concert[]> }) {
   if (!concerts.length) return null;
 
   return (
-    <div className="ml-1 mb-6 h-full max-w-[500px] rounded-lg border-4 border-white bg-background/80 p-4 text-white backdrop-blur-[2px]">
-      <div className="mb-4 text-xl font-bold">Próximos conciertos</div>
-      <ul className="space-y-3">
+    <div className="ml-1 mb-6 h-full max-w-[520px] rounded-lg bg-background/80 p-5 text-white shadow-xl backdrop-blur-[2px] lg:p-6">
+      <div className="mb-4 text-2xl font-bold">Próximos conciertos</div>
+      <ul className="space-y-4">
         {concerts.map((concert) => (
-          <li key={concert.name} className="text-sm text-gray-100">
+          <li key={concert.name} className="text-base text-gray-100 lg:text-lg">
             {[concert.date, concert.time].filter(Boolean).join(' - ')}
             {(concert.date || concert.time) && ' - '}
-            <span className="text-base font-bold text-white">
+            <span className="text-lg font-bold text-white lg:text-xl">
               {concert.name}
             </span>
             {concert.price && <> - Precio: {concert.price}</>}

@@ -40,6 +40,19 @@ function fieldForKey(key: string) {
   )?.[0];
 }
 
+// The Notion "Fecha" column is a plain text field formatted as "DD/MM/YY"
+// (Spanish display format), not a native Notion date property — so there's
+// no `date`-typed property to read an ISO date from. Parse that display
+// string too, otherwise every concert looks undated and none get filtered
+// or sorted correctly.
+function parseDisplayDate(value?: string): string | undefined {
+  const match = value?.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/);
+  if (!match) return undefined;
+  const [, day, month, year] = match;
+  const fullYear = year.length === 2 ? `20${year}` : year;
+  return `${fullYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
+
 // Notion property values are shaped differently per column type (title,
 // rich_text, date, number, select, url, ...) — the previous version only
 // understood rich_text, so a "Name" title column or a "Date"/"Price" column
@@ -94,7 +107,8 @@ async function getData() {
       // The database's title column is always the concert name, whatever
       // its column is actually called in Notion.
       if (!concert.name && titleValue) concert.name = titleValue;
-      if (isoDate) concert._isoDate = isoDate;
+      const resolvedIsoDate = isoDate ?? parseDisplayDate(concert.date);
+      if (resolvedIsoDate) concert._isoDate = resolvedIsoDate;
 
       return concert;
     })
@@ -107,7 +121,7 @@ export default async function Page() {
   return (
     <>
       <div className="text-gray-300">
-        <div className="pointer-events-none flex flex-col items-center justify-center">
+        <div className="pointer-events-none flex min-h-screen flex-col items-center justify-center px-4 pt-24">
           <div className="flex flex-col items-center gap-5">
             <h1 className="font-['Ayer Poster'] my-6 text-center text-[20vw] font-bold leading-[25vw] tracking-wider  text-white lg:text-[12vw] lg:leading-[13vw]">
               BLUES CAVALIERS

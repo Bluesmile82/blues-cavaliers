@@ -216,7 +216,10 @@ const CANVAS_PROPS = {
 export default function Background() {
   const isMobile = useIsMobile();
   return (
-    <div className="absolute inset-0 h-full w-full overflow-hidden bg-background filter">
+    // fixed: the page now scrolls (band bio + concerts can exceed one
+    // viewport), so this stays pinned behind the content instead of
+    // stretching—and needing to render—the whole scrollable document height.
+    <div className="fixed inset-0 overflow-hidden bg-background filter">
       <Canvas {...CANVAS_PROPS}>
         <VinylLayer
           count={isMobile ? 18 : 28}
@@ -242,7 +245,7 @@ export default function Background() {
 export function Foreground() {
   const isMobile = useIsMobile();
   return (
-    <div className="absolute inset-0 z-10 h-full w-full overflow-hidden">
+    <div className="fixed inset-0 z-10 overflow-hidden">
       <Canvas {...CANVAS_PROPS}>
         <VinylLayer
           count={isMobile ? 4 : 7}

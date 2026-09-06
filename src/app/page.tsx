@@ -146,7 +146,7 @@ export default async function Page() {
             <a
               href="https://too.fm/o0jqbby"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="pointer-events-auto relative z-20 rounded-full border-2 border-white px-6 py-2 text-sm font-bold uppercase tracking-widest text-white transition hover:bg-white hover:text-background"
             >
               Escúchanos en tu plataforma favorita

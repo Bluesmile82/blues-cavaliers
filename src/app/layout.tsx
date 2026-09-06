@@ -2,7 +2,7 @@ import 'src/styles/globals.css';
 import { Rationale, Overpass, Roboto_Mono } from 'next/font/google';
 import Header from '#/src/app/components/header';
 import Image from 'next/image';
-import Background, { Foreground } from '#/src/app/components/background';
+import Background from '#/src/app/components/background';
 
 // "Ayer Poster" (the display font used for headings) is registered once via
 // @font-face in globals.css and applied selectively with font-['Ayer Poster'].
@@ -37,7 +37,6 @@ export default async function RootLayout({
         <main className="container pointer-events-none relative mx-8">
           {children}
         </main>
-        <Foreground />
       </body>
     </html>
   );

@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 const MEMBERS = [
   { name: 'Álvaro Leal', role: 'Guitarra y voz' },
   { name: 'Larry Mendoza', role: 'Armónica' },
@@ -17,12 +15,13 @@ function AboutBand() {
       </h2>
 
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
-        <Image
-          src="/images/cavaliers.webp"
-          alt="Blues Cavaliers tocando en directo"
-          width={640}
-          height={480}
-          className="w-full flex-shrink-0 rounded-lg object-cover shadow-lg lg:w-80"
+        {/* eslint-disable-next-line @next/next/no-img-element -- plain <img>
+            avoids Next's image optimizer, which was failing to serve this
+            asset on the Netlify deploy preview */}
+        <img
+          src="/images/cavaliers-live.jpg"
+          alt="Álvaro Leal, Larry Mendoza y Gabi Torné, de Blues Cavaliers, tocando en directo"
+          className="aspect-[5/7] w-full flex-shrink-0 rounded-lg object-cover shadow-lg lg:w-72"
         />
 
         <div className="min-w-0 flex-1">

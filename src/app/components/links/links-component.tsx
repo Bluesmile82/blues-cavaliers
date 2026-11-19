@@ -2,7 +2,7 @@ import { Youtube } from 'lucide-react';
 
 function Links() {
   const renderFacebookSVG = () => (
-    <svg viewBox="0 0 36 36" fill="url(#jsc_s_2)" height="40" width="40">
+    <svg aria-hidden viewBox="0 0 36 36" fill="url(#jsc_s_2)" height="40" width="40">
       <defs>
         <linearGradient x1="50%" x2="50%" y1="97.0782153%" y2="0%" id="jsc_s_2">
           <stop offset="0%" stopColor="#0062E0"></stop>
@@ -19,6 +19,7 @@ function Links() {
 
   const renderInstagramSVG = () => (
     <svg
+      aria-hidden
       xmlns="http://www.w3.org/2000/svg"
       width="40"
       height="40"
@@ -66,33 +67,39 @@ function Links() {
   );
 
   return (
-    <div className="flex items-center">
+    <div className="flex shrink-0 items-center gap-1.5 [&_svg]:h-7 [&_svg]:w-7 sm:gap-2 sm:[&_svg]:h-8 sm:[&_svg]:w-8 lg:[&_svg]:h-10 lg:[&_svg]:w-10">
       <a
         href="/blues_cavaliers_media_kit.pdf"
-        title="Media kit"
-        className=" font-['Ayer Poster'] mr-4 p-4 text-lg font-bold uppercase tracking-wide text-white hover:text-gray-100 lg:text-2xl"
-        target={'_blank'}
+        aria-label="Info programadores (dossier en PDF, se abre en una pestaña nueva)"
+        // Overpass, styled like the "Desliza" hint
+        className="mr-1 whitespace-nowrap text-[11px] font-bold uppercase leading-none tracking-wider text-white underline-offset-4 hover:underline sm:text-sm sm:tracking-widest lg:mr-4"
+        target="_blank"
+        rel="noopener noreferrer"
       >
         Info programadores
       </a>
       <a
         href="https://www.facebook.com/bluescavaliers"
-        title="Facebook link"
-        className="mr-2"
+        aria-label="Blues Cavaliers en Facebook"
+        className="rounded-full transition duration-200 hover:brightness-110 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.55)] motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-110"
       >
         {renderFacebookSVG()}
       </a>
-      <a href="https://www.instagram.com/cavaliersblues" title="Instagram link">
+      <a
+        href="https://www.instagram.com/cavaliersblues"
+        aria-label="Blues Cavaliers en Instagram"
+        className="rounded-full transition duration-200 hover:brightness-110 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.55)] motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-110"
+      >
         {renderInstagramSVG()}
       </a>
       <a
         href="https://www.youtube.com/watch?v=Ln6ss_0vOoY"
-        title="YouTube link"
-        className="ml-2 text-white hover:text-red-500"
+        aria-label="Vídeo de Blues Cavaliers en YouTube (se abre en una pestaña nueva)"
+        className="text-white transition duration-200 hover:text-red-500 motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-110"
         target="_blank"
-        rel="noreferrer"
+        rel="noopener noreferrer"
       >
-        <Youtube size={40} />
+        <Youtube aria-hidden size={40} />
       </a>
     </div>
   );

@@ -1,24 +1,15 @@
-/* eslint-disable @next/next/no-img-element */
 import Links from '#/src/app/components/links';
 
 function Header() {
   return (
-    // z-20: above the fixed background (-z-10 in background/index.tsx) and
-    // the page content, so the Facebook/Instagram/media-kit links stay on top.
-    <header className="container absolute top-4 z-20 flex w-full justify-between border-b border-gray-100/10 pb-2">
-      <div className="flex items-end justify-center">
-        {/* <div className="flex items-center justify-center">
-          <img
-            className="mr-2 w-12"
-            src="/images/cavalierslogo.png"
-            alt="Blues Cavaliers logo"
-          />
-        </div> */}
-        <h2 className="ml-4 mb-1 hidden text-sm text-white lg:visible">
-          Una banda de blues acústico de Madrid
-        </h2>
-      </div>
-      <div className="mr-4">
+    // fixed so the name and links stay reachable while scrolling the bio;
+    // the blurred band keeps them readable over the scrolling text
+    <header className="fixed inset-x-0 top-0 z-40 bg-gradient-to-b from-background/80 to-background/0 backdrop-blur-[2px]">
+      <div className="container mx-auto flex items-center justify-between gap-2 border-b border-gray-100/10 px-4 py-3">
+        {/* the video opens on the band logo, so the name lives up here */}
+        <h1 className="font-['Ayer_Poster'] whitespace-nowrap text-2xl font-bold sm:text-3xl leading-none tracking-[0.02em] text-white lg:text-6xl">
+          BLUES CAVALIERS
+        </h1>
         <Links />
       </div>
     </header>

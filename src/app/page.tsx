@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
+import { ChevronDown } from 'lucide-react';
 import NotionService from 'src/app/services/notion';
 import Concerts from '#/src/app/components/concerts';
-// export { metadata } from './metadata';
 import AboutBand from '#/src/app/components/about';
 
 // re-fetch Notion concerts hourly instead of freezing them at build time
@@ -120,11 +120,8 @@ export default async function Page() {
   return (
     <>
       <div className="text-gray-300">
-        <div className="pointer-events-none flex min-h-screen flex-col items-center justify-center px-4 pt-24">
+        <div className="pointer-events-none relative flex min-h-screen flex-col items-center justify-center px-4 pt-24">
           <div className="flex flex-col items-center gap-5">
-            <h1 className="font-['Ayer_Poster'] my-6 text-center text-[20vw] font-bold leading-[25vw] tracking-[0.02em] text-white lg:text-[12vw] lg:leading-[13vw]">
-              BLUES CAVALIERS
-            </h1>
             {/* only the concerts/links stay interactive (the video is the page
                 background, see components/background); the rest lets
                 pointer events fall through to the background behind them */}
@@ -134,17 +131,19 @@ export default async function Page() {
                 <Concerts promise={concerts} />
               </Suspense>
             </div>
-            <a
-              href="https://too.fm/o0jqbby"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="pointer-events-auto relative z-20 rounded-full border-2 border-white px-6 py-2 text-sm font-bold uppercase tracking-widest text-white transition hover:bg-white hover:text-background"
-            >
-              Escúchanos en tu plataforma favorita
-            </a>
           </div>
         </div>
-        <div className="pointer-events-auto relative z-20 mx-auto mb-16 max-w-3xl px-4">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-[calc(100svh-11rem)] flex flex-col items-center gap-1 text-xs font-bold uppercase tracking-widest text-white [text-shadow:0_1px_4px_rgb(0_0_0_/_0.8)]"
+        >
+          Desliza
+          <ChevronDown className="h-6 w-6 drop-shadow-[0_1px_3px_rgb(0_0_0_/_0.8)] motion-safe:animate-bounce" />
+        </div>
+        <div
+          id="contenido"
+          className="pointer-events-auto relative z-20 mx-auto mb-40 max-w-3xl scroll-mt-28 px-4"
+        >
           <AboutBand />
         </div>
       </div>

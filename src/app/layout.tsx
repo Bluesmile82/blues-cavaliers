@@ -3,6 +3,8 @@ import { Rationale, Overpass, Roboto_Mono } from 'next/font/google';
 import Header from '#/src/app/components/header';
 import Image from 'next/image';
 import Background from '#/src/app/components/background';
+// page <title>, description and icons (the export in page.tsx was commented out)
+export { metadata } from './metadata';
 
 // "Ayer Poster" (the display font used for headings) is registered once via
 // @font-face in globals.css and applied selectively with font-['Ayer Poster'].
@@ -32,9 +34,15 @@ export default async function RootLayout({
   return (
     <html lang="es" className={`${inter.variable} ${rationale.variable}`}>
       <body className="relative min-h-screen">
+        <a
+          href="#contenido"
+          className="sr-only z-50 rounded-full bg-white font-bold text-background focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:px-4 focus:py-2"
+        >
+          Saltar al contenido
+        </a>
         <Background />
         <Header />
-        <main className="container pointer-events-none relative mx-8">
+        <main className="container pointer-events-none relative mx-auto px-4">
           {children}
         </main>
       </body>

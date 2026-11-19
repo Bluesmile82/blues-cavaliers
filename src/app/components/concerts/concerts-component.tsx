@@ -25,7 +25,7 @@ async function Concerts({ promise }: { promise: Promise<Concert[]> }) {
 
   return (
     <div className="ml-1 mb-6 h-full max-w-[520px] rounded-lg bg-background/80 p-5 text-white shadow-xl backdrop-blur-[2px] lg:p-6">
-      <div className="mb-4 text-2xl font-bold">Próximos conciertos</div>
+      <h2 className="mb-4 text-2xl font-bold">Próximos conciertos</h2>
       <ul className="space-y-4">
         {concerts.map((concert) => (
           <li key={concert.name} className="text-base text-gray-100 lg:text-lg">
@@ -41,7 +41,7 @@ async function Concerts({ promise }: { promise: Promise<Concert[]> }) {
                 <a
                   className="pointer-events-auto text-gray-300 underline"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   href={concert.direction_link}
                 >
                   {concert.direction ?? concert.direction_link}

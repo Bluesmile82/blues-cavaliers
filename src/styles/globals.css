@@ -21,6 +21,13 @@ h1 {
   pointer-events: none;
 }
 
+/* visible keyboard focus everywhere; mouse clicks don't trigger it */
+:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+  border-radius: 9999px;
+}
+
 /* From https://css-irl.info/css-halftone-patterns/ */
 
 html,

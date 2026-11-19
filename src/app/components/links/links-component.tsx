@@ -1,4 +1,4 @@
-import { Youtube } from 'lucide-react';
+import { Youtube } from '#/src/app/components/icons';
 
 function Links() {
   const renderFacebookSVG = () => (
@@ -99,7 +99,7 @@ function Links() {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <Youtube aria-hidden size={40} />
+        <Youtube aria-hidden width={40} height={40} />
       </a>
     </div>
   );

@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown } from '#/src/app/components/icons';
 import NotionService from 'src/app/services/notion';
 import Concerts from '#/src/app/components/concerts';
 import AboutBand from '#/src/app/components/about';

@@ -1,18 +1,23 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Volume2, VolumeX } from 'lucide-react';
+import { Volume2, VolumeX } from '#/src/app/components/icons';
 
 const YT_ID = 'Ln6ss_0vOoY';
 const INTRO_SECONDS = 5;
 // YouTube's startup controls (pause/prev/next) sit over the video's centred
-// logo for the first ~3s and no embed param turns them off, so an identical
-// logo image is laid on top, then dissolves as the video's logo starts
-// shrinking into the corner (~4s in)
-const LOGO_END_SECONDS = 3.95;
-// where the diamond sits in the 16:9 video frame, measured from the video
-const LOGO_WIDTH = '41.8%';
-const LOGO_CENTER_Y = '54.3%';
+// logo until ~3.5s and no embed param turns them off, so an identical logo
+// image is laid on top. Measured from the video: the controls are gone by
+// ~3.6s and the logo starts shrinking into the corner at ~3.75s; the
+// image dissolves in that short window
+const LOGO_FADE_START = 3.5; // + the 250ms CSS fade, done by ~3.75s
+// where the diamond's outer edges sit in the 16:9 video frame
+const LOGO_WIDTH = '42.15%';
+const LOGO_CENTER_Y = '54.33%';
+// the video's logo is a touch warmer than the PNG and falls off slightly
+// towards the top and bottom tips; multiplied over the PNG, clipped to it
+const LOGO_GRADE =
+  'linear-gradient(to bottom, rgb(244 232 218), rgb(250 240 228) 8%, rgb(255 246 235) 18%, rgb(255 246 237) 50%, rgb(255 244 232) 72%, rgb(246 235 222) 82%, rgb(238 226 213) 92%, rgb(234 222 209))';
 
 // Browsers only autoplay muted video, so the backdrop starts silent and the
 // "Activar sonido" button unmutes it through the YouTube iframe API
@@ -43,18 +48,35 @@ export default function Background() {
   const [intro, setIntro] = useState(true);
   const [logo, setLogo] = useState(true);
   useEffect(() => {
+    // the player only reports its time ~4x a second, and those reports lag;
+    // each one says when it was taken (currentTimeLastUpdated_), so we
+    // extrapolate the real time and schedule the fade to the exact moment
+    let playing = false;
+    let fadeTimer: ReturnType<typeof setTimeout> | undefined;
     const onMessage = (e: MessageEvent) => {
       if (!/youtube/.test(e.origin) || typeof e.data !== 'string') return;
+      let info: any;
       try {
-        const t = JSON.parse(e.data)?.info?.currentTime;
-        if (typeof t === 'number') {
-          setIntro(t < INTRO_SECONDS);
-          setLogo(t < LOGO_END_SECONDS);
-        }
-      } catch {}
+        info = JSON.parse(e.data)?.info;
+      } catch {
+        return;
+      }
+      if (typeof info?.playerState === 'number') playing = info.playerState === 1;
+      if (typeof info?.currentTime !== 'number') return;
+      const at = info.currentTimeLastUpdated_ ?? Date.now() / 1000;
+      const now = playing ? info.currentTime + (Date.now() / 1000 - at) : info.currentTime;
+      setIntro(now < INTRO_SECONDS);
+      setLogo(now < LOGO_FADE_START);
+      clearTimeout(fadeTimer);
+      if (playing && now < LOGO_FADE_START) {
+        fadeTimer = setTimeout(() => setLogo(false), (LOGO_FADE_START - now) * 1000);
+      }
     };
     window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
+    return () => {
+      window.removeEventListener('message', onMessage);
+      clearTimeout(fadeTimer);
+    };
   }, []);
 
   useEffect(() => {
@@ -139,16 +161,27 @@ export default function Background() {
               aria-hidden
             />
             {/* same box as the video, so it lands exactly on the video's logo */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/logo-diamond.png"
-              alt=""
+            <div
               aria-hidden
-              className={`absolute left-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-500 ${
+              className={`absolute left-1/2 -translate-x-1/2 -translate-y-1/2 isolate transition-opacity duration-[250ms] ${
                 logo ? 'opacity-100' : 'opacity-0'
               }`}
               style={{ width: LOGO_WIDTH, top: LOGO_CENTER_Y }}
-            />
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/logo-diamond.png" alt="" className="block w-full" />
+              {/* colour grade, clipped to the diamond by using it as a mask */}
+              <div
+                className="absolute inset-0 mix-blend-multiply"
+                style={{
+                  background: LOGO_GRADE,
+                  WebkitMaskImage: 'url(/images/logo-diamond.png)',
+                  maskImage: 'url(/images/logo-diamond.png)',
+                  WebkitMaskSize: '100% 100%',
+                  maskSize: '100% 100%',
+                }}
+              />
+            </div>
           </div>
         )}
         {/* tint so the text stays readable over the footage, held off

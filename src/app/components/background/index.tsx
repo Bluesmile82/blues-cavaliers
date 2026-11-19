@@ -42,6 +42,11 @@ export default function Background() {
   const [sound, setSound] = useState(false);
   // only read when the iframe first mounts; changing it later would reload the player
   const [startMuted, setStartMuted] = useState(true);
+  const DEFAULT_VOLUME = 10;
+  const [volume, setVolume] = useState(DEFAULT_VOLUME);
+  // read by the iframe's onLoad, which can fire after later slider moves
+  const volumeRef = useRef(volume);
+  volumeRef.current = volume;
 
   // the video opens with ~5s of the band logo: show it clean, tint afterwards.
   // Tracks the player's own clock, so the logo is clean again on every loop.
@@ -98,11 +103,36 @@ export default function Background() {
     if (sound) {
       ytCommand(iframeRef.current, 'mute');
     } else {
+      // unmuting with the slider at 0 would be silent, so bring it back up
+      const v = volume || DEFAULT_VOLUME;
+      setVolume(v);
       ytCommand(iframeRef.current, 'unMute');
-      ytCommand(iframeRef.current, 'setVolume', [100]);
+      ytCommand(iframeRef.current, 'setVolume', [v]);
       ytCommand(iframeRef.current, 'playVideo');
     }
     setSound(!sound);
+  };
+
+  // dragging the slider also turns the sound on, and 0 counts as muted
+  const changeVolume = (v: number) => {
+    setVolume(v);
+    if (!load) {
+      if (v > 0) {
+        setStartMuted(false);
+        setLoad(true);
+        setSound(true);
+      }
+      return;
+    }
+    ytCommand(iframeRef.current, 'setVolume', [v]);
+    if (v === 0 && sound) {
+      ytCommand(iframeRef.current, 'mute');
+      setSound(false);
+    } else if (v > 0 && !sound) {
+      ytCommand(iframeRef.current, 'unMute');
+      ytCommand(iframeRef.current, 'playVideo');
+      setSound(true);
+    }
   };
 
   const params = new URLSearchParams({
@@ -154,6 +184,7 @@ export default function Background() {
                     );
                     ytCommand(iframe, 'unloadModule', ['captions']);
                     ytCommand(iframe, 'unloadModule', ['cc']);
+                    ytCommand(iframe, 'setVolume', [volumeRef.current]);
                   }, ms),
                 );
               }}
@@ -213,17 +244,33 @@ export default function Background() {
           )}
           {sound ? 'Silenciar' : 'Activar sonido'}
         </button>
+        {/* ponytail: native range input. Hidden on phones, where browsers
+            ignore page-set volume (iOS) and the hardware buttons do this */}
+        <label className="flex items-center gap-3 rounded-full bg-background/70 px-5 py-3 text-white shadow-2xl ring-2 ring-white/60 backdrop-blur-sm max-sm:hidden sm:py-4">
+          <span className="sr-only">Volumen</span>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            step={5}
+            // shows the level the sound will play at, even while muted
+            value={volume}
+            onChange={(e) => changeVolume(Number(e.target.value))}
+            aria-valuetext={sound ? `${volume}%` : `${volume}%, silenciado`}
+            className="h-1.5 w-28 cursor-pointer accent-white lg:w-36"
+          />
+        </label>
         <a
           href="https://too.fm/o0jqbby"
           target="_blank"
           rel="noopener noreferrer"
-          // the visible label is shortened on phones; keep the full one for
+          // the visible label is shortened below laptop width; keep the full one for
           // screen readers, plus the new-tab warning
           aria-label="Escúchanos en tu plataforma favorita (se abre en una pestaña nueva)"
           className="rounded-full border-2 border-white bg-background/70 px-5 py-[10px] text-sm font-bold uppercase tracking-wider text-white shadow-2xl backdrop-blur-sm transition hover:bg-white hover:text-background motion-safe:hover:scale-105 sm:px-7 sm:py-[14px] sm:text-base sm:tracking-widest"
         >
           Escúchanos
-          <span className="max-sm:hidden"> en tu plataforma favorita</span>
+          <span className="max-lg:hidden"> en tu plataforma favorita</span>
         </a>
       </aside>
     </>

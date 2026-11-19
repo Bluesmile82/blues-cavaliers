@@ -1,3 +1,5 @@
+import { Youtube } from 'lucide-react';
+
 function Links() {
   const renderFacebookSVG = () => (
     <svg viewBox="0 0 36 36" fill="url(#jsc_s_2)" height="40" width="40">
@@ -82,6 +84,15 @@ function Links() {
       </a>
       <a href="https://www.instagram.com/cavaliersblues" title="Instagram link">
         {renderInstagramSVG()}
+      </a>
+      <a
+        href="https://www.youtube.com/watch?v=Ln6ss_0vOoY"
+        title="YouTube link"
+        className="ml-2 text-white hover:text-red-500"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <Youtube size={40} />
       </a>
     </div>
   );

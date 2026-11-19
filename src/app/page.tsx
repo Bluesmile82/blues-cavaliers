@@ -122,22 +122,13 @@ export default async function Page() {
       <div className="text-gray-300">
         <div className="pointer-events-none flex min-h-screen flex-col items-center justify-center px-4 pt-24">
           <div className="flex flex-col items-center gap-5">
-            <h1 className="font-['Ayer Poster'] my-6 text-center text-[20vw] font-bold leading-[25vw] tracking-wider  text-white lg:text-[12vw] lg:leading-[13vw]">
+            <h1 className="font-['Ayer_Poster'] my-6 text-center text-[20vw] font-bold leading-[25vw] tracking-[0.02em] text-white lg:text-[12vw] lg:leading-[13vw]">
               BLUES CAVALIERS
             </h1>
-            {/* only the video/concerts/links stay interactive; the rest lets
+            {/* only the concerts/links stay interactive (the video is the page
+                background, see components/background); the rest lets
                 pointer events fall through to the background behind them */}
             <div className="relative z-20 flex justify-center gap-4 max-lg:flex-wrap">
-              <iframe
-                className="shadow-50/30 pointer-events-auto max-w-[400px] rounded-xl border-4 border-white shadow-lg"
-                width="100%"
-                height="232"
-                src="https://www.youtube.com/embed/Ln6ss_0vOoY"
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
               <Suspense fallback={<div>...</div>}>
                 {/* @ts-expect-error Async Server Component */}
                 <Concerts promise={concerts} />

@@ -1,4 +1,3 @@
-import { Youtube } from '#/src/app/components/icons';
 
 function Links() {
   const renderFacebookSVG = () => (
@@ -66,13 +65,33 @@ function Links() {
     </svg>
   );
 
+  // solid red badge, so it reads the same size as the Facebook/Instagram ones
+  const renderYoutubeSVG = () => (
+    <svg aria-hidden xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+      <rect width="40" height="40" rx="9" fill="#FF0000" />
+      <path fill="#fff" d="M15.5 12.5v15l12.5-7.5z" />
+    </svg>
+  );
+
+  const textLink =
+    'mr-1 whitespace-nowrap text-[11px] font-bold uppercase leading-none tracking-wider text-white underline-offset-4 hover:underline sm:text-sm sm:tracking-widest lg:mr-4';
+  const iconLink =
+    'rounded-full transition duration-200 hover:brightness-110 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.55)] motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-110';
+
   return (
-    <div className="flex shrink-0 items-center gap-1.5 [&_svg]:h-7 [&_svg]:w-7 sm:gap-2 sm:[&_svg]:h-8 sm:[&_svg]:w-8 lg:[&_svg]:h-10 lg:[&_svg]:w-10">
+    <nav
+      aria-label="Principal"
+      className="flex shrink-0 items-center gap-1.5 [&_svg]:h-7 [&_svg]:w-7 sm:gap-2 sm:[&_svg]:h-8 sm:[&_svg]:w-8 lg:[&_svg]:h-10 lg:[&_svg]:w-10"
+    >
+      {/* desktop only: on phones the concerts are already on the first screen */}
+      <a href="#conciertos" className={`${textLink} max-lg:hidden`}>
+        Conciertos
+      </a>
       <a
         href="/blues_cavaliers_media_kit.pdf"
         aria-label="Info programadores (dossier en PDF, se abre en una pestaña nueva)"
         // Overpass, styled like the "Desliza" hint
-        className="mr-1 whitespace-nowrap text-[11px] font-bold uppercase leading-none tracking-wider text-white underline-offset-4 hover:underline sm:text-sm sm:tracking-widest lg:mr-4"
+        className={textLink}
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -81,27 +100,27 @@ function Links() {
       <a
         href="https://www.facebook.com/bluescavaliers"
         aria-label="Blues Cavaliers en Facebook"
-        className="rounded-full transition duration-200 hover:brightness-110 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.55)] motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-110"
+        className={iconLink}
       >
         {renderFacebookSVG()}
       </a>
       <a
         href="https://www.instagram.com/cavaliersblues"
         aria-label="Blues Cavaliers en Instagram"
-        className="rounded-full transition duration-200 hover:brightness-110 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.55)] motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-110"
+        className={iconLink}
       >
         {renderInstagramSVG()}
       </a>
       <a
         href="https://www.youtube.com/watch?v=Ln6ss_0vOoY"
         aria-label="Vídeo de Blues Cavaliers en YouTube (se abre en una pestaña nueva)"
-        className="text-white transition duration-200 hover:text-red-500 motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-110"
+        className={iconLink}
         target="_blank"
         rel="noopener noreferrer"
       >
-        <Youtube aria-hidden width={40} height={40} />
+        {renderYoutubeSVG()}
       </a>
-    </div>
+    </nav>
   );
 }
 export default Links;

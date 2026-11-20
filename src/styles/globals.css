@@ -21,6 +21,13 @@ h1 {
   pointer-events: none;
 }
 
+/* smooth in-page jumps (Conciertos link), unless the visitor asked for less motion */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 /* visible keyboard focus everywhere; mouse clicks don't trigger it */
 :focus-visible {
   outline: 3px solid #fff;

@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Volume2, VolumeX } from '#/src/app/components/icons';
 
 const YT_ID = 'Ln6ss_0vOoY';
+// shared box for the bottom bar's controls, so they're all the same height
+const CONTROL =
+  'inline-flex h-12 items-center rounded-full px-5 text-sm tracking-wider shadow-2xl transition motion-safe:hover:scale-105 sm:h-14 sm:px-7 sm:text-base sm:tracking-widest';
 const INTRO_SECONDS = 5;
 // YouTube's startup controls (pause/prev/next) sit over the video's centred
 // logo until ~3.5s and no embed param turns them off, so an identical logo
@@ -231,10 +234,10 @@ export default function Background() {
         <button
           type="button"
           onClick={toggleSound}
-          className={`flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold uppercase tracking-wider shadow-2xl transition motion-safe:hover:scale-105 sm:gap-3 sm:px-7 sm:py-4 sm:text-base sm:tracking-widest ${
+          className={`${CONTROL} gap-2 font-bold uppercase sm:gap-3 ${
             sound
               ? 'bg-background/80 text-white ring-2 ring-white'
-              : 'bg-white text-background ring-4 ring-white/40'
+              : 'bg-white text-background ring-2 ring-white'
           }`}
         >
           {sound ? (
@@ -246,7 +249,7 @@ export default function Background() {
         </button>
         {/* ponytail: native range input. Hidden on phones, where browsers
             ignore page-set volume (iOS) and the hardware buttons do this */}
-        <label className="flex items-center gap-3 rounded-full bg-background/70 px-5 py-3 text-white shadow-2xl ring-2 ring-white/60 backdrop-blur-sm max-sm:hidden sm:py-4">
+        <label className={`${CONTROL} bg-background/70 text-white ring-2 ring-white/60 backdrop-blur-sm max-sm:hidden`}>
           <span className="sr-only">Volumen</span>
           <input
             type="range"
@@ -267,10 +270,13 @@ export default function Background() {
           // the visible label is shortened below laptop width; keep the full one for
           // screen readers, plus the new-tab warning
           aria-label="Escúchanos en tu plataforma favorita (se abre en una pestaña nueva)"
-          className="rounded-full border-2 border-white bg-background/70 px-5 py-[10px] text-sm font-bold uppercase tracking-wider text-white shadow-2xl backdrop-blur-sm transition hover:bg-white hover:text-background motion-safe:hover:scale-105 sm:px-7 sm:py-[14px] sm:text-base sm:tracking-widest"
+          className={`${CONTROL} bg-background/70 font-bold uppercase text-white ring-2 ring-white backdrop-blur-sm hover:bg-white hover:text-background`}
         >
-          Escúchanos
-          <span className="max-lg:hidden"> en tu plataforma favorita</span>
+          {/* inline-flex drops plain leading spaces, hence the nbsp */}
+          <span>
+            Escúchanos
+            <span className="max-lg:hidden">{'\u00a0'}en tu plataforma favorita</span>
+          </span>
         </a>
       </aside>
     </>

@@ -120,19 +120,9 @@ export default async function Page() {
   return (
     <>
       <div className="text-gray-300">
-        <div className="pointer-events-none relative flex min-h-screen flex-col items-center justify-center px-4 pt-24">
-          <div className="flex flex-col items-center gap-5">
-            {/* only the concerts/links stay interactive (the video is the page
-                background, see components/background); the rest lets
-                pointer events fall through to the background behind them */}
-            <div className="relative z-20 flex justify-center gap-4 max-lg:flex-wrap">
-              <Suspense fallback={<div>...</div>}>
-                {/* @ts-expect-error Async Server Component */}
-                <Concerts promise={concerts} />
-              </Suspense>
-            </div>
-          </div>
-        </div>
+        {/* desktop: the first screen is left to the video; concerts come right
+            after the "Desliza" hint. Phones keep them on the first screen */}
+        <div aria-hidden className="pointer-events-none h-[100svh] max-lg:hidden" />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-[calc(100svh-11rem)] flex flex-col items-center gap-1 text-xs font-bold uppercase tracking-widest text-white [text-shadow:0_1px_4px_rgb(0_0_0_/_0.8)]"
@@ -140,11 +130,17 @@ export default async function Page() {
           Desliza
           <ChevronDown className="h-6 w-6 drop-shadow-[0_1px_3px_rgb(0_0_0_/_0.8)] motion-safe:animate-bounce" />
         </div>
-        <div
-          id="contenido"
-          className="pointer-events-auto relative z-20 mx-auto mb-40 max-w-3xl scroll-mt-28 px-4"
-        >
-          <AboutBand />
+        {/* target of the "Saltar al contenido" skip link */}
+        <div id="contenido" className="scroll-mt-28">
+          <div className="pointer-events-auto relative z-20 mx-auto flex max-w-3xl justify-center px-4 max-lg:min-h-[100svh] max-lg:items-center max-lg:pt-24 lg:mb-10">
+            <Suspense fallback={null}>
+              {/* @ts-expect-error Async Server Component */}
+              <Concerts promise={concerts} />
+            </Suspense>
+          </div>
+          <div className="pointer-events-auto relative z-20 mx-auto mb-40 max-w-3xl px-4">
+            <AboutBand />
+          </div>
         </div>
       </div>
     </>

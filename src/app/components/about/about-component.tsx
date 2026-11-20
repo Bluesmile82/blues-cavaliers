@@ -4,6 +4,28 @@ const MEMBERS = [
   { name: 'Gabi Torné', role: 'Guitarra' },
 ];
 
+// schema.org description of the band for search engines
+const BAND_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'MusicGroup',
+  name: 'Blues Cavaliers',
+  url: 'https://www.bluescavaliers.com',
+  description: 'Banda de blues acústico de Madrid.',
+  genre: ['Blues', 'Acoustic blues', 'Chicago blues', 'R&B'],
+  image: 'https://www.bluescavaliers.com/images/cavaliers-live.jpg',
+  foundingLocation: { '@type': 'Place', name: 'Madrid, España' },
+  member: MEMBERS.map((member) => ({
+    '@type': 'OrganizationRole',
+    member: { '@type': 'Person', name: member.name },
+    roleName: member.role,
+  })),
+  sameAs: [
+    'https://www.facebook.com/bluescavaliers',
+    'https://www.instagram.com/cavaliersblues',
+    'https://www.youtube.com/watch?v=Ln6ss_0vOoY',
+  ],
+};
+
 function AboutBand() {
   return (
     <div className="rounded-lg bg-background/80 p-6 text-white shadow-xl backdrop-blur-[2px] lg:p-10">
@@ -48,6 +70,13 @@ function AboutBand() {
           </ul>
         </div>
       </div>
+      <script
+        type="application/ld+json"
+        // static object defined above; "<" escaped as a matter of habit
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(BAND_JSON_LD).replace(/</g, '\\u003c'),
+        }}
+      />
     </div>
   );
 }

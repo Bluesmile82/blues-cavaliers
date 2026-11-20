@@ -1,4 +1,4 @@
-// ponytail: the four icons the site uses, inlined (Lucide paths, ISC) so
+// ponytail: the three icons the site uses, inlined (Lucide paths, ISC) so
 // there's no icon package to install; add lucide-react back if this grows
 import type { SVGProps } from 'react';
 
@@ -40,12 +40,5 @@ export const VolumeX = (p: SVGProps<SVGSVGElement>) => (
     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
     <line x1="22" x2="16" y1="9" y2="15" />
     <line x1="16" x2="22" y1="9" y2="15" />
-  </Icon>
-);
-
-export const Youtube = (p: SVGProps<SVGSVGElement>) => (
-  <Icon {...p}>
-    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
-    <path d="m10 15 5-3-5-3z" />
   </Icon>
 );

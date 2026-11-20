@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
+  // absolute base for the OG/Twitter image URLs, and the one canonical address
+  metadataBase: new URL('https://www.bluescavaliers.com'),
+  alternates: { canonical: '/' },
   title: 'Blues Cavaliers',
   description:
     'Una destacada banda de blues acústico en Madrid. Disfruta de la auténtica esencia del blues con estos grandes músicos. Sus interpretaciones te transportarán a las raíces del género, mientras te sumerges en su contagioso ritmo. Desde los escenarios de Madrid, los Blues Cavaliers te ofrecen una experiencia musical inigualable.',
@@ -51,7 +54,7 @@ export const metadata: Metadata = {
     title: 'Blues Cavaliers',
     description: 'Una banda de blues acústico de Madrid',
     locale: 'es_ES',
-    url: 'https://bluescavaliers.com',
+    url: 'https://www.bluescavaliers.com',
     images: [
       {
         url: '/images/android-chrome-512x512.png',

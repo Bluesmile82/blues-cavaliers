@@ -16,6 +16,7 @@ import {
   MapPin,
   Ticket,
 } from '#/src/app/components/icons';
+import SubscribeForm from './subscribe-form';
 
 const NEW_TAB = ' (se abre en una pestaña nueva)';
 const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
@@ -333,6 +334,8 @@ async function Concerts({ promise }: { promise: Promise<UpcomingConcert[]> }) {
           ninguna.
         </p>
       )}
+
+      <SubscribeForm />
 
       {jsonLd.length > 0 && (
         <script

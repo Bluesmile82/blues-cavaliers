@@ -1,0 +1,15 @@
+rules_version = '2';
+
+// Concert subscribers: the site may only add an address, never read,
+// change or delete one. Read the list from the Firebase console.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /suscriptores/{email} {
+      allow create: if request.resource.data.keys().hasOnly(['email'])
+        && request.resource.data.email is string
+        && request.resource.data.email == email
+        && email.size() <= 254
+        && email.matches('^[^@ ]+@[^@ ]+[.][^@ ]+$');
+    }
+  }
+}

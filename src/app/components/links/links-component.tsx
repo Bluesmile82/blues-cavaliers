@@ -73,17 +73,19 @@ function Links() {
     </svg>
   );
 
+  // phones under 390px (most Androids, iPhone SE) can't fit the name, this
+  // label and three icons on one line, so the label wraps onto two
   const textLink =
-    'mr-1 whitespace-nowrap text-[11px] font-bold uppercase leading-none tracking-wider text-white underline-offset-4 hover:underline sm:text-sm sm:tracking-widest lg:mr-4';
+    'mr-1 whitespace-nowrap py-2 text-[11px] font-bold uppercase leading-none tracking-wider text-white underline-offset-4 hover:underline sm:text-sm sm:tracking-widest lg:mr-4 max-[389px]:whitespace-normal max-[389px]:text-center max-[389px]:leading-tight max-[389px]:tracking-normal max-[389px]:max-w-[6rem]';
   const iconLink =
     'rounded-full transition duration-200 hover:brightness-110 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.55)] motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-110';
 
   return (
     <nav
       aria-label="Principal"
-      className="flex shrink-0 items-center gap-1.5 [&_svg]:h-7 [&_svg]:w-7 sm:gap-2 sm:[&_svg]:h-8 sm:[&_svg]:w-8 lg:[&_svg]:h-10 lg:[&_svg]:w-10"
+      className="flex shrink-0 items-center gap-1.5 [&_svg]:h-7 [&_svg]:w-7 max-[389px]:gap-1 max-[389px]:[&_svg]:h-6 max-[389px]:[&_svg]:w-6 sm:gap-2 sm:[&_svg]:h-8 sm:[&_svg]:w-8 lg:[&_svg]:h-10 lg:[&_svg]:w-10"
     >
-      {/* desktop only: on phones the concerts are already on the first screen */}
+      {/* desktop only: no room for it in the phone navbar */}
       <a href="#conciertos" className={`${textLink} max-lg:hidden`}>
         Conciertos
       </a>

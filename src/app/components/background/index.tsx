@@ -6,7 +6,7 @@ import { Volume2, VolumeX } from '#/src/app/components/icons';
 const YT_ID = 'Ln6ss_0vOoY';
 // shared box for the bottom bar's controls, so they're all the same height
 const CONTROL =
-  'inline-flex h-12 items-center rounded-full px-5 text-sm tracking-wider shadow-2xl transition motion-safe:hover:scale-105 sm:h-14 sm:px-7 sm:text-base sm:tracking-widest';
+  'inline-flex h-12 items-center rounded-full px-4 text-sm tracking-wide shadow-2xl transition motion-safe:hover:scale-105 sm:h-14 sm:px-7 sm:text-base sm:tracking-widest';
 const INTRO_SECONDS = 5;
 // YouTube's startup controls (pause/prev/next) sit over the video's centred
 // logo until ~3.5s and no embed param turns them off, so an identical logo
@@ -229,7 +229,7 @@ export default function Background() {
       {/* the two calls to action, side by side and always in reach */}
       <aside
         aria-label="Escuchar a Blues Cavaliers"
-        className="fixed inset-x-0 bottom-6 z-30 flex flex-wrap items-center justify-center gap-3 px-4"
+        className="fixed inset-x-0 bottom-6 z-30 flex flex-wrap items-center justify-center gap-2 px-4 sm:gap-3"
       >
         <button
           type="button"

@@ -111,3 +111,9 @@ body {
 .sepia-animate {
   animation: sepiaAnimation 10s infinite;
 }
+
+/* reCAPTCHA v3 badge would sit over the fixed bottom bar; the subscribe form
+   shows Google's required notice instead */
+.grecaptcha-badge {
+  visibility: hidden;
+}
